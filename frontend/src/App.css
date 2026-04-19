@@ -253,18 +253,17 @@ main {
 }
 
 .admin-corner-icon {
-  position: absolute;
-  top: 6px;
-  right: 14px;
-  width: 30px;
-  height: 30px;
+  width: 34px;
+  height: 34px;
   border-radius: 999px;
-  display: grid;
-  place-items: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
   background: var(--primary);
   border: 1px solid rgba(255, 255, 255, 0.28);
   color: var(--white);
-  z-index: 35;
+  transition: transform 0.2s ease, background 0.2s ease;
 }
 
 .admin-corner-icon svg {
@@ -275,6 +274,7 @@ main {
 
 .admin-corner-icon:hover {
   background: #1e3a8a;
+  transform: translateY(-1px);
 }
 
 .top-contact-bar {
@@ -287,15 +287,49 @@ main {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: nowrap;
   gap: 12px;
+  padding: 2px 0;
   color: rgba(255, 255, 255, 0.9);
   font-size: 0.84rem;
   font-weight: 600;
 }
 
+.top-contact-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  min-width: 0;
+  flex: 0 1 auto;
+}
+
 .top-address,
 .top-phones {
   margin: 0;
+}
+
+.top-address {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.top-phones {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.top-phones span {
+  opacity: 0.72;
+}
+
+.top-address,
+.top-phones,
+.top-phones a {
+  white-space: nowrap;
 }
 
 .top-phones a {
@@ -319,6 +353,13 @@ main {
   color: var(--dark);
   white-space: nowrap;
   transition: transform 0.2s ease;
+}
+
+.brand span {
+  display: block;
+  max-width: min(46vw, 420px);
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .brand:hover {
@@ -1712,6 +1753,10 @@ main {
 }
 
 @media (max-width: 1024px) {
+  .brand span {
+    max-width: 280px;
+  }
+
   .nav-menu {
     gap: 20px;
   }
@@ -1753,20 +1798,42 @@ main {
   }
 
   .top-contact-inner {
-    min-height: 46px;
-    flex-direction: column;
-    justify-content: center;
-    align-items: flex-start;
-    padding: 6px 0;
-    font-size: 0.78rem;
-    gap: 3px;
+    min-height: 40px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 4px 0;
+    font-size: 0.74rem;
+    gap: 8px;
+  }
+
+  .top-contact-actions {
+    width: auto;
+    justify-content: flex-end;
+    gap: 8px;
+    min-width: 0;
+    flex: 0 1 auto;
+  }
+
+  .top-address {
+    max-width: 42%;
+  }
+
+  .top-phones {
+    font-size: 0.74rem;
+    line-height: 1.2;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
   }
 
   .admin-corner-icon {
-    right: 10px;
-    top: 8px;
     width: 28px;
     height: 28px;
+  }
+
+  .brand span {
+    max-width: 54vw;
   }
 
   .hamburger {

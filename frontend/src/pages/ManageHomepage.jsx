@@ -9,6 +9,7 @@ import {
   fetchProjectsAdmin,
   fetchQuoteRequestsAdmin,
   fetchServicesAdmin,
+  getApiErrorMessage,
   markQuoteAsOpened,
   updateProject,
   updateService,
@@ -67,7 +68,7 @@ function ManageHomepage() {
         setQuotes(quoteItems)
         setServices(serviceItems)
       } catch (err) {
-        setError(err.response?.data?.message || 'Unable to load admin data')
+        setError(getApiErrorMessage(err, 'Unable to load admin data'))
       } finally {
         setLoading(false)
       }
@@ -193,7 +194,7 @@ function ManageHomepage() {
         return
       }
 
-      setError(err.response?.data?.message || 'Failed to add project')
+      setError(getApiErrorMessage(err, 'Failed to add project'))
     } finally {
       setSavingProject(false)
     }
@@ -241,7 +242,11 @@ function ManageHomepage() {
 
       const serverMessage = err.response?.data?.message
       const statusCode = err.response?.status
-      setError(serverMessage ? `Failed to add service: ${serverMessage}` : `Failed to add service${statusCode ? ` (HTTP ${statusCode})` : ''}`)
+      setError(
+        serverMessage
+          ? `Failed to add service: ${serverMessage}`
+          : `${getApiErrorMessage(err, 'Failed to add service')}${statusCode ? ` (HTTP ${statusCode})` : ''}`
+      )
       setServiceCreateStatus('')
     } finally {
       setSavingService(false)
@@ -273,7 +278,7 @@ function ManageHomepage() {
         return
       }
 
-      setError(err.response?.data?.message || 'Failed to delete project')
+      setError(getApiErrorMessage(err, 'Failed to delete project'))
     }
   }
 
@@ -307,7 +312,7 @@ function ManageHomepage() {
         return
       }
 
-      setError(err.response?.data?.message || 'Failed to delete service')
+      setError(getApiErrorMessage(err, 'Failed to delete service'))
     }
   }
 
@@ -498,7 +503,7 @@ function ManageHomepage() {
         return
       }
 
-      setError(err.response?.data?.message || 'Failed to update service')
+      setError(getApiErrorMessage(err, 'Failed to update service'))
       setServiceUpdateStatusById((prev) => ({
         ...prev,
         [service._id]: '',
@@ -568,7 +573,7 @@ function ManageHomepage() {
         return
       }
 
-      setError(err.response?.data?.message || 'Failed to update project')
+      setError(getApiErrorMessage(err, 'Failed to update project'))
     } finally {
       setSavingProjectUpdateId('')
     }
@@ -589,7 +594,7 @@ function ManageHomepage() {
         return
       }
 
-      setError(err.response?.data?.message || 'Failed to mark quote as opened')
+      setError(getApiErrorMessage(err, 'Failed to mark quote as opened'))
     } finally {
       setQuoteActionId('')
     }
@@ -611,7 +616,7 @@ function ManageHomepage() {
         return
       }
 
-      setError(err.response?.data?.message || 'Failed to delete quote request')
+      setError(getApiErrorMessage(err, 'Failed to delete quote request'))
     } finally {
       setQuoteActionId('')
     }

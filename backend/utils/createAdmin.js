@@ -3,12 +3,19 @@ const User = require("../models/User");
 
 const createAdmin = async () => {
   try {
+    const adminEmail = (process.env.ADMIN_EMAIL || "grkaluminiumshop@gmail.com").trim().toLowerCase();
+    const adminPassword = process.env.ADMIN_PASSWORD || "gadd_1980";
+
+    if (!adminEmail || !adminPassword) {
+      // eslint-disable-next-line no-console
+      console.warn("Admin seed skipped: ADMIN_EMAIL or ADMIN_PASSWORD is missing");
+      return;
+    }
+
     const adminUser = await User.findOne({ role: "admin" });
-    const adminEmail = "grkaluminiumshop@gmail.com";
-    const adminPassword = "gadd_1980";
-    const hashedPassword = await bcrypt.hash(adminPassword, 10);
 
     if (!adminUser) {
+      const hashedPassword = await bcrypt.hash(adminPassword, 10);
       await User.create({
         email: adminEmail,
         password: hashedPassword,
@@ -18,12 +25,22 @@ const createAdmin = async () => {
       // eslint-disable-next-line no-console
       console.log("Admin created");
     } else {
-      adminUser.email = adminEmail;
-      adminUser.password = hashedPassword;
-      await adminUser.save();
+      const shouldUpdateEmail = adminUser.email !== adminEmail;
+      const passwordMatches = await bcrypt.compare(adminPassword, adminUser.password);
 
-      // eslint-disable-next-line no-console
-      console.log("Admin updated");
+      if (shouldUpdateEmail || !passwordMatches) {
+        adminUser.email = adminEmail;
+        adminUser.password = await bcrypt.hash(adminPassword, 10);
+        await adminUser.save();
+
+        // eslint-disable-next-line no-console
+        console.log("Admin updated from environment settings");
+      }
+
+      if (!shouldUpdateEmail && passwordMatches) {
+        // eslint-disable-next-line no-console
+        console.log("Admin already in sync");
+      }
     }
   } catch (error) {
     // eslint-disable-next-line no-console

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { fetchProjects } from '../services/api'
+import { fetchProjects, getApiErrorMessage } from '../services/api'
 import ProjectCard from './ProjectCard'
 
 function Projects() {
@@ -13,7 +13,7 @@ function Projects() {
         const items = await fetchProjects()
         setProjects(items)
       } catch (err) {
-        setError(err.response?.data?.message || 'Unable to load projects right now')
+        setError(getApiErrorMessage(err, 'Unable to load projects right now'))
       } finally {
         setLoading(false)
       }

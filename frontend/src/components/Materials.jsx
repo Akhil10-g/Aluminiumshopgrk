@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { fetchProducts, toAbsoluteImageUrl } from '../services/api'
+import { fetchProducts, getApiErrorMessage, toAbsoluteImageUrl } from '../services/api'
 import MaterialCard from './MaterialCard'
 import MaterialFilters from './MaterialFilters'
 import './Materials.css'
@@ -138,6 +138,7 @@ function Materials() {
   const [cardsPerView, setCardsPerView] = useState(4)
   const [carouselStart, setCarouselStart] = useState(0)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
 
   useEffect(() => {
     const updateCardsPerView = () => {
@@ -167,6 +168,8 @@ function Materials() {
 
   useEffect(() => {
     const loadProducts = async () => {
+      setError('')
+
       try {
         const items = await fetchProducts()
         const mappedProducts = items.map(mapBackendProduct)
@@ -190,6 +193,7 @@ function Materials() {
         setMaterials(merged)
       } catch (err) {
         setMaterials(defaultCatalog)
+        setError(getApiErrorMessage(err, 'Unable to refresh materials from server right now'))
       } finally {
         setLoading(false)
       }
@@ -256,6 +260,7 @@ function Materials() {
       />
 
       {loading && <p className="info-message">Loading materials...</p>}
+  {!loading && error && <p className="error-message">{error}</p>}
 
       {!loading && (
         <>

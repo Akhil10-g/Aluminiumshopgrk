@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { fetchProjectsAdmin, toAbsoluteImageUrl } from '../services/api'
+import { fetchProjectsAdmin, getApiErrorMessage, toAbsoluteImageUrl } from '../services/api'
 import './ProjectsPage.css'
 
 function ProjectsPage() {
@@ -15,7 +15,7 @@ function ProjectsPage() {
         const items = await fetchProjectsAdmin()
         setProjects(items)
       } catch (err) {
-        setError(err.response?.data?.message || 'Unable to load project gallery right now')
+        setError(getApiErrorMessage(err, 'Unable to load project gallery right now'))
       } finally {
         setLoading(false)
       }

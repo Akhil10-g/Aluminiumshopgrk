@@ -1,11 +1,54 @@
 import axios from 'axios'
+import { API_BASE_URL } from '../config/apiConfig'
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'
+const REQUEST_TIMEOUT_MS = 10000
 
 const api = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 10000,
+  timeout: REQUEST_TIMEOUT_MS,
 })
+
+const normalizeApiError = (error) => {
+  if (error?.isApiError) {
+    return error
+  }
+
+  const normalized = new Error(
+    error?.response?.data?.message || error?.message || 'Request failed. Please try again.'
+  )
+
+  normalized.name = 'ApiError'
+  normalized.isApiError = true
+  normalized.status = error?.response?.status || null
+  normalized.response = error?.response
+
+  return normalized
+}
+
+api.interceptors.response.use(
+  (response) => response,
+  (error) => Promise.reject(normalizeApiError(error))
+)
+
+const request = async (promiseFactory) => {
+  try {
+    return await promiseFactory()
+  } catch (error) {
+    throw normalizeApiError(error)
+  }
+}
+
+export const getApiErrorMessage = (error, fallbackMessage = 'Something went wrong. Please try again.') => {
+  if (typeof error?.message === 'string' && error.message.trim()) {
+    return error.message
+  }
+
+  if (typeof error?.response?.data?.message === 'string' && error.response.data.message.trim()) {
+    return error.response.data.message
+  }
+
+  return fallbackMessage
+}
 
 export const toAbsoluteImageUrl = (imagePath) => {
   if (!imagePath) {
@@ -20,7 +63,7 @@ export const toAbsoluteImageUrl = (imagePath) => {
 }
 
 export const fetchProducts = async () => {
-  const response = await api.get('/api/products')
+  const response = await request(() => api.get('/api/products'))
   const payload = response.data
 
   if (Array.isArray(payload)) {
@@ -35,7 +78,7 @@ export const fetchProducts = async () => {
 }
 
 export const fetchProjects = async () => {
-  const response = await api.get('/api/projects?limit=12')
+  const response = await request(() => api.get('/api/projects?limit=12'))
   const payload = response.data
 
   if (Array.isArray(payload)) {
@@ -50,7 +93,7 @@ export const fetchProjects = async () => {
 }
 
 export const fetchProjectsAdmin = async () => {
-  const response = await api.get('/api/projects?limit=100&sort=latest')
+  const response = await request(() => api.get('/api/projects?limit=100&sort=latest'))
   const payload = response.data
 
   if (Array.isArray(payload)) {
@@ -65,7 +108,7 @@ export const fetchProjectsAdmin = async () => {
 }
 
 export const fetchServices = async () => {
-  const response = await api.get('/api/services')
+  const response = await request(() => api.get('/api/services'))
   const payload = response.data
 
   if (Array.isArray(payload)) {
@@ -82,41 +125,41 @@ export const fetchServices = async () => {
 export const fetchServicesAdmin = fetchServices
 
 export const fetchProjectById = async (id) => {
-  const response = await api.get(`/api/projects/${id}`)
+  const response = await request(() => api.get(`/api/projects/${id}`))
   return response.data
 }
 
 export const fetchHomepageData = async () => {
-  const response = await api.get('/api/homepage')
+  const response = await request(() => api.get('/api/homepage'))
   return response.data
 }
 
 export const updateHomepageData = async (token, formData) => {
-  const response = await api.put('/api/homepage', formData, {
+  const response = await request(() => api.put('/api/homepage', formData, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
-  })
+  }))
 
   return response.data
 }
 
 export const adminLogin = async (payload) => {
-  const response = await api.post('/api/auth/login', payload)
+  const response = await request(() => api.post('/api/auth/login', payload))
   return response.data
 }
 
 export const createQuoteRequest = async (payload) => {
-  const response = await api.post('/api/quotes', payload)
+  const response = await request(() => api.post('/api/quotes', payload))
   return response.data
 }
 
 export const fetchQuoteRequestsAdmin = async (token) => {
-  const response = await api.get('/api/quotes', {
+  const response = await request(() => api.get('/api/quotes', {
     headers: {
       Authorization: `Bearer ${token}`,
     },
-  })
+  }))
 
   const payload = response.data
 
@@ -132,7 +175,7 @@ export const fetchQuoteRequestsAdmin = async (token) => {
 }
 
 export const markQuoteAsOpened = async (token, quoteId) => {
-  const response = await api.patch(
+  const response = await request(() => api.patch(
     `/api/quotes/${quoteId}/open`,
     {},
     {
@@ -140,77 +183,77 @@ export const markQuoteAsOpened = async (token, quoteId) => {
         Authorization: `Bearer ${token}`,
       },
     }
-  )
+  ))
 
   return response.data
 }
 
 export const deleteQuoteRequest = async (token, quoteId) => {
-  const response = await api.delete(`/api/quotes/${quoteId}`, {
+  const response = await request(() => api.delete(`/api/quotes/${quoteId}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
-  })
+  }))
 
   return response.data
 }
 
 export const createProject = async (token, formData) => {
-  const response = await api.post('/api/projects', formData, {
+  const response = await request(() => api.post('/api/projects', formData, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
-  })
+  }))
 
   return response.data
 }
 
 export const createService = async (token, formData) => {
-  const response = await api.post('/api/services', formData, {
+  const response = await request(() => api.post('/api/services', formData, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
-  })
+  }))
 
   return response.data
 }
 
 export const updateService = async (token, serviceId, formData) => {
-  const response = await api.put(`/api/services/${serviceId}`, formData, {
+  const response = await request(() => api.put(`/api/services/${serviceId}`, formData, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
-  })
+  }))
 
   return response.data
 }
 
 export const updateProject = async (token, projectId, formData) => {
-  const response = await api.put(`/api/projects/${projectId}`, formData, {
+  const response = await request(() => api.put(`/api/projects/${projectId}`, formData, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
-  })
+  }))
 
   return response.data
 }
 
 export const deleteProject = async (token, projectId) => {
-  const response = await api.delete(`/api/projects/${projectId}`, {
+  const response = await request(() => api.delete(`/api/projects/${projectId}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
-  })
+  }))
 
   return response.data
 }
 
 export const deleteService = async (token, serviceId) => {
-  const response = await api.delete(`/api/services/${serviceId}`, {
+  const response = await request(() => api.delete(`/api/services/${serviceId}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
-  })
+  }))
 
   return response.data
 }

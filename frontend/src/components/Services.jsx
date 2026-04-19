@@ -10,7 +10,7 @@ const workHighlights = [
   'Mesh Work',
 ]
 
-function Services({ servicesData = [] }) {
+function Services({ servicesData = [], loading = false, error = '' }) {
   const dynamicServiceList = (servicesData || []).map((item, index) => ({
     title: item.title || `Service ${index + 1}`,
     images:
@@ -31,8 +31,13 @@ function Services({ servicesData = [] }) {
         <h2>Services Built for Quality and Durability</h2>
       </div>
 
-      {serviceList.length === 0 ? (
+      {loading ? (
+        <p className="info-message">Loading services...</p>
+      ) : serviceList.length === 0 ? (
+        <>
+          {error && <p className="error-message">{error}</p>}
         <p className="info-message">No services have been added by admin yet.</p>
+        </>
       ) : (
         <div className="services-v2-grid">
           {serviceList.map((service) => (

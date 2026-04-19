@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { adminLogin } from '../services/api'
+import { adminLogin, getApiErrorMessage } from '../services/api'
 
 function AdminLogin() {
   const navigate = useNavigate()
@@ -26,7 +26,7 @@ function AdminLogin() {
       localStorage.setItem('adminToken', payload.token)
       window.location.assign('/admin/homepage')
     } catch (err) {
-      setError(err.response?.data?.message || 'Login failed')
+      setError(getApiErrorMessage(err, 'Login failed'))
     } finally {
       setLoading(false)
     }

@@ -55,20 +55,22 @@ function Navbar() {
 
   return (
     <header className="navbar-wrap">
-      <Link to="/admin/login" className="admin-corner-icon" aria-label="Admin Login" title="Admin Login">
-        <svg viewBox="0 0 24 24" role="img" aria-hidden="true">
-          <path d="M12 2l8 3v6c0 5-3.4 9.5-8 11-4.6-1.5-8-6-8-11V5l8-3zm0 2.1L6 6.3V11c0 4.1 2.6 8 6 9.3 3.4-1.3 6-5.2 6-9.3V6.3l-6-2.2zm0 3.4a3 3 0 013 3c0 1.3-.8 2.4-2 2.8V16h-2v-2.7a3 3 0 01-2-2.8 3 3 0 013-3z" />
-        </svg>
-      </Link>
-
       <div className="top-contact-bar">
         <div className="shell top-contact-inner">
           <p className="top-address">Medchal, Telangana 501401</p>
-          <p className="top-phones">
-            <a href="tel:+919392012776">+91 9392012776</a>
-            <span>, </span>
-            <a href="tel:+919849170500">+91 9849170500</a>
-          </p>
+          <div className="top-contact-actions">
+            <p className="top-phones">
+              <a href="tel:+919392012776">+91 9392012776</a>
+              <span>, </span>
+              <a href="tel:+919849170500">+91 9849170500</a>
+            </p>
+
+            <Link to="/admin/login" className="admin-corner-icon" aria-label="Admin Login" title="Admin Login">
+              <svg viewBox="0 0 24 24" role="img" aria-hidden="true">
+                <path d="M12 2l8 3v6c0 5-3.4 9.5-8 11-4.6-1.5-8-6-8-11V5l8-3zm0 2.1L6 6.3V11c0 4.1 2.6 8 6 9.3 3.4-1.3 6-5.2 6-9.3V6.3l-6-2.2zm0 3.4a3 3 0 013 3c0 1.3-.8 2.4-2 2.8V16h-2v-2.7a3 3 0 01-2-2.8 3 3 0 013-3z" />
+              </svg>
+            </Link>
+          </div>
         </div>
       </div>
 

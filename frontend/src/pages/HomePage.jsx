@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import Hero from '../components/Hero'
 import Services from '../components/Services'
 import Materials from '../components/Materials'
-import { createQuoteRequest, fetchServices } from '../services/api'
+import { createQuoteRequest, fetchServices, getApiErrorMessage } from '../services/api'
 
 const coreStats = [
   { label: 'Years Experience', value: '35+' },
@@ -66,6 +66,8 @@ function HomePage() {
   const [selectedCatalogItem, setSelectedCatalogItem] = useState('')
   const [activeStep, setActiveStep] = useState(0)
   const [servicesData, setServicesData] = useState([])
+  const [servicesLoading, setServicesLoading] = useState(true)
+  const [servicesError, setServicesError] = useState('')
 
   const businessWhatsApp = '919392012776'
 
@@ -90,11 +92,16 @@ function HomePage() {
 
   useEffect(() => {
     const loadServices = async () => {
+      setServicesError('')
+
       try {
         const items = await fetchServices()
         setServicesData(items)
       } catch (error) {
         setServicesData([])
+        setServicesError(getApiErrorMessage(error, 'Unable to load services right now'))
+      } finally {
+        setServicesLoading(false)
       }
     }
 
@@ -136,7 +143,7 @@ function HomePage() {
         sendToWhatsApp: true,
       })
     } catch (error) {
-      setQuoteError(error.response?.data?.message || 'Unable to submit quote request right now')
+      setQuoteError(getApiErrorMessage(error, 'Unable to submit quote request right now'))
     } finally {
       setQuoteLoading(false)
     }
@@ -190,7 +197,7 @@ function HomePage() {
         </div>
       </section>
 
-      <Services servicesData={servicesData} />
+      <Services servicesData={servicesData} loading={servicesLoading} error={servicesError} />
       <Materials />
 
       <section id="about" className="section about-section shell">
@@ -404,6 +411,13 @@ function HomePage() {
               ? `Selected: ${selectedCatalogItem}`
               : 'Click any item in the complete catalog to highlight it.'}
           </p>
+
+          {catalogTab === 'services' && servicesLoading && (
+            <p className="info-message">Loading service catalog...</p>
+          )}
+          {catalogTab === 'services' && servicesError && !servicesLoading && (
+            <p className="error-message">{servicesError}</p>
+          )}
 
           <div className="catalog-pill-grid" role="tabpanel" aria-live="polite">
             {activeCatalogItems.map((item) => {

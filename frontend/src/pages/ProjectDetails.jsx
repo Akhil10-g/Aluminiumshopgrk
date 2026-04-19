@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { fetchProjectById, toAbsoluteImageUrl } from '../services/api'
+import { fetchProjectById, getApiErrorMessage, toAbsoluteImageUrl } from '../services/api'
 
 function ProjectDetails() {
   const { id } = useParams()
@@ -14,7 +14,7 @@ function ProjectDetails() {
         const item = await fetchProjectById(id)
         setProject(item)
       } catch (err) {
-        setError(err.response?.data?.message || 'Unable to load project details')
+        setError(getApiErrorMessage(err, 'Unable to load project details'))
       } finally {
         setLoading(false)
       }
