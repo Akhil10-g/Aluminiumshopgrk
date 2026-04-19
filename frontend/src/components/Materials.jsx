@@ -33,6 +33,15 @@ const defaultCatalog = [
       'Multi-shade ACP sheets for elevation and interior cladding, offering weather protection, elegant finish, and lightweight installation.',
   },
   {
+    id: 'mat-premium-acp',
+    title: 'Premium ACP Sheets',
+    filterCategory: 'ACP',
+    image: '/materials/acp-sheet1.jpeg',
+    items: ['4mm Premium ACP', 'Exterior UV-Coated ACP', 'Wood Finish ACP', 'Marble Finish ACP'],
+    description:
+      'Premium ACP materials used for facade elevation and modern interiors, offering rich finish quality, long durability, and low maintenance.',
+  },
+  {
     id: 'mat-glass',
     title: 'Toughened Glass Sheets',
     filterCategory: 'Glass',

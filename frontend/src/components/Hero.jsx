@@ -7,7 +7,7 @@ const slides = [
     background: '/images/founder/founder.jpg',
     logo: '/images/logo/logo.png',
     title: 'GRK Aluminium Works',
-    subtitle: '35+ Years of Experience',
+    subtitle: 'Trusted Aluminium & ACP Team',
     description: 'Trusted Aluminium & ACP Solutions',
     cta: 'Get Quote',
   },
@@ -44,7 +44,7 @@ const slides = [
 ]
 
 function Hero() {
-  const [active, setActive] = useState(0)
+  const [active, setActive] = useState(1)
   const [workImage, setWorkImage] = useState(0)
 
   const currentSlide = slides[active]
@@ -86,9 +86,32 @@ function Hero() {
             <article key={slide.key} className={`hero-slide-modern ${isActive ? 'active' : ''}`}>
               <div className="hero-slide-shell shell">
                 <div className="hero-copy">
-                  <p className="hero-kicker">{slide.subtitle}</p>
-                  <h1>{slide.title}</h1>
+                  {slide.type === 'work' ? (
+                    <>
+                      <p className="hero-kicker">PREMIUM ALUMINIUM, ACP & PARTITION SOLUTIONS</p>
+                      <h1>
+                        <span>Our Work</span>
+                        <span>Speaks Quality</span>
+                      </h1>
+                    </>
+                  ) : (
+                    <>
+                      <p className="hero-kicker">{slide.subtitle}</p>
+                      <h1>{slide.title}</h1>
+                    </>
+                  )}
                   <p className="hero-description">{slide.description}</p>
+
+                  {slide.type === 'work' && (
+                    <div className="hero-actions">
+                      <a href="/#quote-form" className="hero-cta hero-main-btn">
+                        Get Quote
+                      </a>
+                      <a href="/projects" className="outline-btn hero-secondary">
+                        View Projects
+                      </a>
+                    </div>
+                  )}
 
                   {slide.type === 'founder' && (
                     <a href="/#quote-form" className="hero-cta hero-main-btn">
@@ -98,11 +121,11 @@ function Hero() {
 
                   {slide.type === 'contact' && (
                     <div className="hero-actions">
-                      <a href="tel:+919876543210" className="hero-cta">
+                      <a href="tel:+919392012776" className="hero-cta">
                         Call Now
                       </a>
                       <a
-                        href="https://wa.me/919876543210?text=Hello%20GRK%20Aluminium%20Works%2C%20I%20need%20a%20quote."
+                        href="https://wa.me/919392012776?text=Hello%20GRK%20Aluminium%20Works%2C%20I%20need%20a%20quote."
                         target="_blank"
                         rel="noreferrer"
                         className="outline-btn hero-secondary"

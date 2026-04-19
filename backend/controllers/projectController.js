@@ -1,22 +1,36 @@
 const Project = require("../models/Project");
 
+const buildProjectLabel = (description, fallbackPrefix) => {
+  const text = String(description || '').trim();
+
+  if (!text) {
+    return fallbackPrefix;
+  }
+
+  const compact = text.replace(/\s+/g, ' ');
+  return compact.length > 48 ? `${compact.slice(0, 48)}...` : compact;
+};
+
 const addProject = async (req, res) => {
   try {
     const { title, company, description } = req.body;
-    const normalizedTitle = String(title || '').trim();
-    const normalizedCompany = String(company || '').trim();
     const normalizedDescription = String(description || '').trim();
 
-    if (!normalizedTitle || !normalizedCompany) {
-      return res.status(400).json({ message: "title and company are required" });
+    const images = (req.files || []).map((file) => `/uploads/${file.filename}`);
+
+    if (images.length === 0) {
+      return res.status(400).json({ message: "At least one project image is required" });
     }
 
-    const images = (req.files || []).map((file) => `/uploads/${file.filename}`);
+    const nextCount = (await Project.countDocuments()) + 1;
+    const normalizedTitle =
+      String(title || '').trim() || buildProjectLabel(normalizedDescription, `Project ${nextCount}`);
+    const normalizedCompany = String(company || '').trim() || 'GRK Aluminium Works';
 
     const project = await Project.create({
       title: normalizedTitle,
       company: normalizedCompany,
-      description: normalizedDescription || 'Project images uploaded from admin gallery.',
+      description: normalizedDescription,
       images,
     });
 
@@ -78,7 +92,7 @@ const getProject = async (req, res) => {
 
 const updateProject = async (req, res) => {
   try {
-    const { title, company, description } = req.body;
+    const { title, company, description, retainedImages } = req.body;
 
     const project = await Project.findById(req.params.id);
 
@@ -86,12 +100,53 @@ const updateProject = async (req, res) => {
       return res.status(404).json({ message: "Project not found" });
     }
 
-    if (title !== undefined) project.title = title;
-    if (company !== undefined) project.company = company;
-    if (description !== undefined) project.description = description;
+    const nextDescription = description !== undefined ? String(description || '').trim() : project.description;
 
-    if (req.files && req.files.length > 0) {
-      project.images = req.files.map((file) => `/uploads/${file.filename}`);
+    if (title !== undefined) {
+      project.title = String(title || '').trim() || buildProjectLabel(nextDescription, project.title);
+    }
+
+    if (company !== undefined) {
+      project.company = String(company || '').trim() || 'GRK Aluminium Works';
+    }
+
+    if (description !== undefined) {
+      project.description = nextDescription;
+
+      if (!title && !String(project.title || '').trim()) {
+        project.title = buildProjectLabel(nextDescription, project.title || 'Project');
+      }
+    }
+
+    const uploadedImages = (req.files || []).map((file) => `/uploads/${file.filename}`);
+
+    if (retainedImages !== undefined) {
+      let parsedRetained = [];
+
+      try {
+        if (Array.isArray(retainedImages)) {
+          parsedRetained = retainedImages;
+        } else {
+          parsedRetained = JSON.parse(String(retainedImages || '[]'));
+        }
+      } catch (_error) {
+        return res.status(400).json({ message: "Invalid retainedImages payload" });
+      }
+
+      const currentImagesSet = new Set(project.images || []);
+      const safeRetained = parsedRetained
+        .filter((image) => typeof image === 'string')
+        .filter((image) => currentImagesSet.has(image));
+
+      const nextImages = [...safeRetained, ...uploadedImages];
+
+      if (nextImages.length === 0) {
+        return res.status(400).json({ message: "At least one project image is required" });
+      }
+
+      project.images = nextImages;
+    } else if (uploadedImages.length > 0) {
+      project.images = uploadedImages;
     }
 
     const updatedProject = await project.save();

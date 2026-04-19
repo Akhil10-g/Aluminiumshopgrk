@@ -100,7 +100,7 @@ function ProjectsPage() {
                 <div className="projects-modal-content">
                   <h3>{selectedItem.projectTitle}</h3>
                   <p className="projects-modal-company">{selectedItem.projectCompany}</p>
-                  <p>{selectedItem.projectDescription || 'Project images uploaded from admin gallery.'}</p>
+                  {selectedItem.projectDescription ? <p>{selectedItem.projectDescription}</p> : null}
                   <p className="projects-modal-count">
                     Image {selectedItem.imageIndex} of {selectedItem.imageCount}
                   </p>

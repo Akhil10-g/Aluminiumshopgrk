@@ -9,6 +9,7 @@ const authRoutes = require("./routes/authRoutes");
 const productRoutes = require("./routes/productRoutes");
 const homepageRoutes = require("./routes/homepageRoutes");
 const quoteRoutes = require("./routes/quoteRoutes");
+const serviceRoutes = require("./routes/serviceRoutes");
 const { seedDefaultAdmin } = require("./controllers/authController");
 
 dotenv.config();
@@ -27,6 +28,7 @@ app.get("/", (req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/projects", projectRoutes);
 app.use("/api/products", productRoutes);
+app.use("/api/services", serviceRoutes);
 app.use("/api/homepage", homepageRoutes);
 app.use("/api/quotes", quoteRoutes);
 

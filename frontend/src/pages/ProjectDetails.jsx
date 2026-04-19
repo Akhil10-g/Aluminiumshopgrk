@@ -51,7 +51,7 @@ function ProjectDetails() {
       <div className="details-head">
         <h1>{project.title}</h1>
         <p className="details-company">{project.company}</p>
-        <p className="details-description">{project.description || 'Project images uploaded from admin gallery.'}</p>
+        {project.description ? <p className="details-description">{project.description}</p> : null}
       </div>
 
       <div className="details-gallery">

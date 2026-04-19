@@ -64,6 +64,23 @@ export const fetchProjectsAdmin = async () => {
   return []
 }
 
+export const fetchServices = async () => {
+  const response = await api.get('/api/services')
+  const payload = response.data
+
+  if (Array.isArray(payload)) {
+    return payload
+  }
+
+  if (Array.isArray(payload.services)) {
+    return payload.services
+  }
+
+  return []
+}
+
+export const fetchServicesAdmin = fetchServices
+
 export const fetchProjectById = async (id) => {
   const response = await api.get(`/api/projects/${id}`)
   return response.data
@@ -78,7 +95,6 @@ export const updateHomepageData = async (token, formData) => {
   const response = await api.put('/api/homepage', formData, {
     headers: {
       Authorization: `Bearer ${token}`,
-      'Content-Type': 'multipart/form-data',
     },
   })
 
@@ -143,7 +159,26 @@ export const createProject = async (token, formData) => {
   const response = await api.post('/api/projects', formData, {
     headers: {
       Authorization: `Bearer ${token}`,
-      'Content-Type': 'multipart/form-data',
+    },
+  })
+
+  return response.data
+}
+
+export const createService = async (token, formData) => {
+  const response = await api.post('/api/services', formData, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
+
+  return response.data
+}
+
+export const updateService = async (token, serviceId, formData) => {
+  const response = await api.put(`/api/services/${serviceId}`, formData, {
+    headers: {
+      Authorization: `Bearer ${token}`,
     },
   })
 
@@ -154,7 +189,6 @@ export const updateProject = async (token, projectId, formData) => {
   const response = await api.put(`/api/projects/${projectId}`, formData, {
     headers: {
       Authorization: `Bearer ${token}`,
-      'Content-Type': 'multipart/form-data',
     },
   })
 
@@ -163,6 +197,16 @@ export const updateProject = async (token, projectId, formData) => {
 
 export const deleteProject = async (token, projectId) => {
   const response = await api.delete(`/api/projects/${projectId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
+
+  return response.data
+}
+
+export const deleteService = async (token, serviceId) => {
+  const response = await api.delete(`/api/services/${serviceId}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
