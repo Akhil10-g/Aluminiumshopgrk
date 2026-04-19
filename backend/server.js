@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const dotenv = require("dotenv");
 const path = require("path");
+const createAdmin = require("./utils/createAdmin");
 
 const projectRoutes = require("./routes/projectRoutes");
 const authRoutes = require("./routes/authRoutes");
@@ -56,7 +57,13 @@ const startServer = async () => {
       throw new Error("JWT_SECRET is not set in environment variables");
     }
 
-    await mongoose.connect(process.env.MONGO_URI);
+    await mongoose.connect(process.env.MONGO_URI)
+  .then(async () => {
+    console.log("MongoDB Connected ✅");
+
+    await createAdmin(); 
+  })
+  .catch(err => console.log(err));;
     // eslint-disable-next-line no-console
     console.log("MongoDB connected");
 
