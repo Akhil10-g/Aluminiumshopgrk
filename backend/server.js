@@ -11,7 +11,6 @@ const productRoutes = require("./routes/productRoutes");
 const homepageRoutes = require("./routes/homepageRoutes");
 const quoteRoutes = require("./routes/quoteRoutes");
 const serviceRoutes = require("./routes/serviceRoutes");
-const { seedDefaultAdmin } = require("./controllers/authController");
 
 dotenv.config();
 
@@ -57,17 +56,11 @@ const startServer = async () => {
       throw new Error("JWT_SECRET is not set in environment variables");
     }
 
-    await mongoose.connect(process.env.MONGO_URI)
-  .then(async () => {
-    console.log("MongoDB Connected ✅");
-
-    await createAdmin(); 
-  })
-  .catch(err => console.log(err));;
+    await mongoose.connect(process.env.MONGO_URI);
     // eslint-disable-next-line no-console
     console.log("MongoDB connected");
 
-    await seedDefaultAdmin();
+    await createAdmin();
 
     app.listen(PORT, () => {
       // eslint-disable-next-line no-console

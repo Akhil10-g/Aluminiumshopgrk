@@ -78,7 +78,7 @@ function Navbar() {
           <span>GRK Aluminium Works</span>
         </Link>
 
-        <div className={`nav-menu ${isOpen ? 'open' : ''}`}>
+        <div id="main-navigation" className={`nav-menu ${isOpen ? 'open' : ''}`}>
           <ul className="nav-links">
             {menuItems.map((item) => (
               <li
@@ -129,9 +129,11 @@ function Navbar() {
         </div>
 
         <button
+          type="button"
           className="hamburger"
           aria-label="Toggle menu"
           aria-expanded={isOpen}
+          aria-controls="main-navigation"
           onClick={() => setIsOpen((prev) => !prev)}
         >
           <span></span>

@@ -141,7 +141,7 @@ function Materials() {
 
   useEffect(() => {
     const updateCardsPerView = () => {
-      if (window.innerWidth <= 768) {
+      if (window.innerWidth <= 640) {
         setCardsPerView(1)
         return
       }
@@ -151,7 +151,7 @@ function Materials() {
         return
       }
 
-      if (window.innerWidth <= 1200) {
+      if (window.innerWidth <= 1280) {
         setCardsPerView(3)
         return
       }

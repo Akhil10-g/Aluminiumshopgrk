@@ -3,23 +3,31 @@ const User = require("../models/User");
 
 const createAdmin = async () => {
   try {
-    const adminExists = await User.findOne({ email: "admin@gmail.com" });
+    const adminUser = await User.findOne({ role: "admin" });
+    const adminEmail = "grkaluminiumshop@gmail.com";
+    const adminPassword = "gadd_1980";
+    const hashedPassword = await bcrypt.hash(adminPassword, 10);
 
-    if (!adminExists) {
-      const hashedPassword = await bcrypt.hash("123456", 10);
-
+    if (!adminUser) {
       await User.create({
-        email: "admin@gmail.com",
+        email: adminEmail,
         password: hashedPassword,
         role: "admin",
       });
 
-      console.log("✅ Admin user created");
+      // eslint-disable-next-line no-console
+      console.log("Admin created");
     } else {
-      console.log("ℹ️ Admin already exists");
+      adminUser.email = adminEmail;
+      adminUser.password = hashedPassword;
+      await adminUser.save();
+
+      // eslint-disable-next-line no-console
+      console.log("Admin updated");
     }
   } catch (error) {
-    console.log("❌ Error creating admin:", error.message);
+    // eslint-disable-next-line no-console
+    console.error("Error in admin seed:", error.message);
   }
 };
 

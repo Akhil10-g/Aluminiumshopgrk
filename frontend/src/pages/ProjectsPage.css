@@ -132,19 +132,25 @@
   gap: 10px;
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 1280px) {
   .projects-gallery-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
+  .projects-gallery-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
   .projects-gallery-page {
     padding-top: 96px;
   }
 
   .projects-gallery-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: 1fr;
   }
 
   .projects-gallery-tile img {
