@@ -1351,6 +1351,19 @@ main {
   animation: whatsappBounce 2.6s ease-in-out infinite;
 }
 
+@media (max-width: 768px) {
+  body {
+    padding-bottom: 86px;
+  }
+
+  .whatsapp-float {
+    right: 10px;
+    bottom: 10px;
+    padding: 10px 14px;
+    font-size: 0.9rem;
+  }
+}
+
 .experience-float {
   position: fixed;
   left: clamp(14px, 1.6vw, 20px);

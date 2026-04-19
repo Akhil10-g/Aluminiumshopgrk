@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { fetchProducts, getApiErrorMessage, toAbsoluteImageUrl } from '../services/api'
 import MaterialCard from './MaterialCard'
 import MaterialFilters from './MaterialFilters'
@@ -135,36 +135,8 @@ function Materials() {
   const [activeFilter, setActiveFilter] = useState('All')
   const [searchText, setSearchText] = useState('')
   const [selectedMaterial, setSelectedMaterial] = useState(null)
-  const [cardsPerView, setCardsPerView] = useState(4)
-  const [carouselStart, setCarouselStart] = useState(0)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
-
-  useEffect(() => {
-    const updateCardsPerView = () => {
-      if (window.innerWidth <= 640) {
-        setCardsPerView(1)
-        return
-      }
-
-      if (window.innerWidth <= 1024) {
-        setCardsPerView(2)
-        return
-      }
-
-      if (window.innerWidth <= 1280) {
-        setCardsPerView(3)
-        return
-      }
-
-      setCardsPerView(4)
-    }
-
-    updateCardsPerView()
-    window.addEventListener('resize', updateCardsPerView)
-
-    return () => window.removeEventListener('resize', updateCardsPerView)
-  }, [])
 
   useEffect(() => {
     const loadProducts = async () => {
@@ -200,12 +172,6 @@ function Materials() {
     }
 
     loadProducts()
-
-    const timer = window.setInterval(loadProducts, 10000)
-
-    return () => {
-      window.clearInterval(timer)
-    }
   }, [])
 
   const filteredMaterials = materials.filter((material) => {
@@ -215,35 +181,6 @@ function Materials() {
 
     return matchesFilter && matchesSearch
   })
-
-  const visibleMaterials = useMemo(() => {
-    if (filteredMaterials.length === 0) {
-      return []
-    }
-
-    const count = Math.min(cardsPerView, filteredMaterials.length)
-
-    return Array.from({ length: count }, (_, index) => {
-      const itemIndex = (carouselStart + index) % filteredMaterials.length
-      return filteredMaterials[itemIndex]
-    })
-  }, [filteredMaterials, cardsPerView, carouselStart])
-
-  useEffect(() => {
-    setCarouselStart(0)
-  }, [activeFilter, searchText])
-
-  useEffect(() => {
-    if (filteredMaterials.length <= cardsPerView) {
-      return undefined
-    }
-
-    const timer = window.setInterval(() => {
-      setCarouselStart((prev) => (prev + 1) % filteredMaterials.length)
-    }, 1400)
-
-    return () => window.clearInterval(timer)
-  }, [filteredMaterials, cardsPerView])
 
   return (
     <section id="materials" className="section materials-section shell material-catalog">
@@ -260,12 +197,12 @@ function Materials() {
       />
 
       {loading && <p className="info-message">Loading materials...</p>}
-  {!loading && error && <p className="error-message">{error}</p>}
+      {!loading && error && <p className="error-message">{error}</p>}
 
       {!loading && (
         <>
-          <div className="catalog-grid moving-catalog" key={`${activeFilter}-${searchText}-${carouselStart}-${cardsPerView}`}>
-            {visibleMaterials.map((material) => (
+          <div className="catalog-grid moving-catalog" key={`${activeFilter}-${searchText}`}>
+            {filteredMaterials.map((material) => (
               <MaterialCard
                 key={material.id || material.title}
                 material={material}

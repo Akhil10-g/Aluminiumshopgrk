@@ -10,9 +10,24 @@ const workHighlights = [
   'Mesh Work',
 ]
 
+const getServiceCategory = (service) => {
+  const source = `${service?.title || ''} ${service?.description || ''}`.toLowerCase()
+
+  if (source.includes('glass') || source.includes('glazing')) {
+    return 'GLASS'
+  }
+
+  if (source.includes('acp')) {
+    return 'ACP'
+  }
+
+  return 'ALUMINIUM'
+}
+
 function Services({ servicesData = [], loading = false, error = '' }) {
   const dynamicServiceList = (servicesData || []).map((item, index) => ({
     title: item.title || `Service ${index + 1}`,
+    category: getServiceCategory(item),
     images:
       Array.isArray(item.images) && item.images.length > 0
         ? item.images.map((img) => toAbsoluteImageUrl(img))
@@ -49,6 +64,7 @@ function Services({ servicesData = [], loading = false, error = '' }) {
                 className={service.images[0] ? '' : 'empty-image'}
               />
               <div className="service-v2-content">
+                <span className="service-v2-badge">{service.category}</span>
                 <h3>{service.title}</h3>
                 <p>{service.description || 'Service details added by admin.'}</p>
 

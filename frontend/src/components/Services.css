@@ -1,24 +1,26 @@
 .services-section {
-  padding-top: 72px;
-  padding-bottom: 72px;
+  padding-top: 84px;
+  padding-bottom: 84px;
 }
 
 .services-v2-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 30px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: stretch;
+  gap: 24px;
 }
 
 .service-v2-card {
   background: #ffffff;
-  border-radius: 12px;
+  border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
   border: 1px solid rgba(15, 23, 42, 0.12);
   transition: transform 0.25s ease, box-shadow 0.25s ease;
   display: flex;
   flex-direction: column;
-  min-height: 390px;
+  min-height: 420px;
+  height: 100%;
 }
 
 .service-v2-card:hover {
@@ -28,7 +30,7 @@
 
 .service-v2-card img {
   width: 100%;
-  height: 210px;
+  height: 220px;
   object-fit: cover;
   background: #f5f7fa;
   transition: transform 0.3s ease;
@@ -46,22 +48,37 @@
   padding: 20px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
   flex: 1;
+}
+
+.service-v2-badge {
+  display: inline-flex;
+  align-self: flex-start;
+  border-radius: 999px;
+  background: #f5f7fa;
+  color: #1e3a8a;
+  border: 1px solid rgba(15, 23, 42, 0.14);
+  font-size: 0.74rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-weight: 800;
+  padding: 5px 10px;
 }
 
 .service-v2-content h3 {
   margin: 0;
   color: #0f172a;
-  font-size: 1.18rem;
+  font-size: 1.2rem;
   font-weight: 700;
+  line-height: 1.35;
 }
 
 .service-v2-content p {
   margin: 0;
   color: rgba(15, 23, 42, 0.75);
   line-height: 1.7;
-  font-size: 0.92rem;
+  font-size: 0.95rem;
 }
 
 .service-v2-thumbs {
@@ -126,9 +143,10 @@
   align-items: center;
   justify-content: center;
   min-height: 44px;
-  padding: 0.75rem 1.2rem;
+  padding: 0.72rem 1.2rem;
   border-radius: 999px;
   font-weight: 700;
+  font-size: 0.9rem;
   background: #1e3a8a;
   color: #ffffff;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -224,13 +242,12 @@
   color: #ffffff;
 }
 
-@media (max-width: 1280px) {
-  .services-v2-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
-
 @media (max-width: 1024px) {
+  .services-section {
+    padding-top: 72px;
+    padding-bottom: 72px;
+  }
+
   .services-v2-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -240,29 +257,48 @@
   }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 768px) {
   .services-section {
-    padding-top: 64px;
-    padding-bottom: 64px;
+    padding-top: 60px;
+    padding-bottom: 104px;
   }
 
   .services-v2-grid {
     grid-template-columns: 1fr;
-    gap: 20px;
+    gap: 18px;
   }
 
   .service-v2-card {
-    min-height: 360px;
+    min-height: 380px;
   }
 
   .service-v2-card img {
-    height: 195px;
+    height: 196px;
+  }
+
+  .service-v2-content {
+    padding: 16px;
+    gap: 10px;
+  }
+
+  .service-v2-content h3 {
+    font-size: 1.04rem;
+  }
+
+  .service-v2-content p {
+    font-size: 0.9rem;
+    line-height: 1.6;
   }
 
   .service-v2-hover-info {
     max-height: 140px;
     opacity: 1;
     transform: translateY(0);
+  }
+
+  .service-v2-btn {
+    width: 100%;
+    justify-content: center;
   }
 
   .services-products-head {

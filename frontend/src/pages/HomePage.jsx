@@ -87,10 +87,6 @@ function HomePage() {
   const getCatalogItemLabel = (item) => (typeof item === 'string' ? item : item.title || '')
 
   useEffect(() => {
-    setSelectedCatalogItem('')
-  }, [catalogTab])
-
-  useEffect(() => {
     const loadServices = async () => {
       setServicesError('')
 
