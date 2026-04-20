@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react"
 import './Services.css'
 import acpElevation from '../assets/services/acp-elevation-building.jpeg'
 import partition from '../assets/services/aluminium-patition.jpeg'
@@ -21,25 +22,22 @@ const imageMapping = {
   default: acpElevation,
 }
 
-// ✅ FIXED Image Logic
+// ✅ Image Logic (UPDATED: supports backend images)
 const getServiceImage = (service) => {
+  // 🔥 1. Use backend image if available
+  if (service?.image) {
+    return service.image
+  }
+
   const source = `${service?.title || ''} ${service?.description || ''}`.toLowerCase()
 
   if (source.includes('acp')) return imageMapping.acp
-
-  if (source.includes('glass') || source.includes('glazing'))
-    return imageMapping.glass
-
+  if (source.includes('glass')) return imageMapping.glass
   if (source.includes('partition')) return imageMapping.partition
-
   if (source.includes('domal')) return imageMapping.domal
-
   if (source.includes('window')) return imageMapping.window
-
   if (source.includes('door')) return imageMapping.door
-
   if (source.includes('mesh')) return imageMapping.mesh
-
   if (source.includes('ceiling')) return imageMapping.ceiling
 
   return imageMapping.default
@@ -59,17 +57,32 @@ const workHighlights = [
 const getServiceCategory = (service) => {
   const source = `${service?.title || ''} ${service?.description || ''}`.toLowerCase()
 
-  if (source.includes('glass') || source.includes('glazing')) return 'GLASS'
+  if (source.includes('glass')) return 'GLASS'
   if (source.includes('acp')) return 'ACP'
 
   return 'ALUMINIUM'
 }
 
-export default function Services({
-  servicesData = [],
-  loading = false,
-  error = '',
-}) {
+export default function Services() {
+  const [servicesData, setServicesData] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState("")
+
+  // ✅ FETCH FROM BACKEND
+  useEffect(() => {
+    fetch(`${import.meta.env.VITE_API_URL}/api/services`)
+      .then(res => res.json())
+      .then(data => {
+        setServicesData(data)
+        setLoading(false)
+      })
+      .catch(err => {
+        console.error(err)
+        setError("Failed to load services")
+        setLoading(false)
+      })
+  }, [])
+
   const serviceList = (servicesData || []).map((item, index) => ({
     title: item.title || `Service ${index + 1}`,
     category: getServiceCategory(item),
