@@ -12,7 +12,7 @@ import windowImg from '../assets/services/aluminium-window.jpeg'
 // ✅ Image Mapping
 const imageMapping = {
   acp: acpElevation,
-  partition: partition,
+  partition,
   glass: glassPartition,
   window: windowImg,
   domal: domalWindow,
@@ -22,25 +22,32 @@ const imageMapping = {
   default: acpElevation,
 }
 
-// ✅ Image Logic (UPDATED: supports backend images)
+// ✅ Image Logic
 const getServiceImage = (service) => {
-  // 🔥 1. Use backend image if available
-  if (service?.image) {
-    return service.image
-  }
+  if (service?.image) return service.image
 
-  const source = `${service?.title || ''} ${service?.description || ''}`.toLowerCase()
+  const text = `${service?.title || ''} ${service?.description || ''}`.toLowerCase()
 
-  if (source.includes('acp')) return imageMapping.acp
-  if (source.includes('glass')) return imageMapping.glass
-  if (source.includes('partition')) return imageMapping.partition
-  if (source.includes('domal')) return imageMapping.domal
-  if (source.includes('window')) return imageMapping.window
-  if (source.includes('door')) return imageMapping.door
-  if (source.includes('mesh')) return imageMapping.mesh
-  if (source.includes('ceiling')) return imageMapping.ceiling
+  if (text.includes('acp')) return imageMapping.acp
+  if (text.includes('glass')) return imageMapping.glass
+  if (text.includes('partition')) return imageMapping.partition
+  if (text.includes('domal')) return imageMapping.domal
+  if (text.includes('window')) return imageMapping.window
+  if (text.includes('door')) return imageMapping.door
+  if (text.includes('mesh')) return imageMapping.mesh
+  if (text.includes('ceiling')) return imageMapping.ceiling
 
   return imageMapping.default
+}
+
+// ✅ Category
+const getServiceCategory = (service) => {
+  const text = `${service?.title || ''} ${service?.description || ''}`.toLowerCase()
+
+  if (text.includes('glass')) return 'GLASS'
+  if (text.includes('acp')) return 'ACP'
+
+  return 'ALUMINIUM'
 }
 
 // ✅ Highlights
@@ -53,31 +60,31 @@ const workHighlights = [
   'Mesh Work',
 ]
 
-// ✅ Category
-const getServiceCategory = (service) => {
-  const source = `${service?.title || ''} ${service?.description || ''}`.toLowerCase()
-
-  if (source.includes('glass')) return 'GLASS'
-  if (source.includes('acp')) return 'ACP'
-
-  return 'ALUMINIUM'
-}
-
 export default function Services() {
   const [servicesData, setServicesData] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
 
-  // ✅ FETCH FROM BACKEND
+  // ✅ FETCH DATA (SAFE VERSION)
   useEffect(() => {
     fetch(`${import.meta.env.VITE_API_URL}/api/services`)
       .then(res => res.json())
       .then(data => {
-        const servicesArray = Array.isArray(data)
-  ? data
-  : data.services || data.data || []
+        console.log("API RESPONSE:", data)
 
-setServicesData(servicesArray)
+        let safeArray = []
+
+        if (Array.isArray(data)) {
+          safeArray = data
+        } else if (Array.isArray(data.services)) {
+          safeArray = data.services
+        } else if (Array.isArray(data.data)) {
+          safeArray = data.data
+        } else {
+          safeArray = []
+        }
+
+        setServicesData(safeArray)
         setLoading(false)
       })
       .catch(err => {
@@ -87,12 +94,15 @@ setServicesData(servicesArray)
       })
   }, [])
 
-  const serviceList = (servicesData || []).map((item, index) => ({
-    title: item.title || `Service ${index + 1}`,
-    category: getServiceCategory(item),
-    image: getServiceImage(item),
-    description: item.description || '',
-  }))
+  // ✅ SAFE MAPPING (NO CRASH)
+  const serviceList = Array.isArray(servicesData)
+    ? servicesData.map((item, index) => ({
+        title: item.title || `Service ${index + 1}`,
+        category: getServiceCategory(item),
+        image: getServiceImage(item),
+        description: item.description || '',
+      }))
+    : []
 
   return (
     <section id="services" className="section services-section shell">
@@ -106,9 +116,7 @@ setServicesData(servicesArray)
       ) : serviceList.length === 0 ? (
         <>
           {error && <p className="error-message">{error}</p>}
-          <p className="info-message">
-            No services have been added by admin yet.
-          </p>
+          <p className="info-message">No services available.</p>
         </>
       ) : (
         <div className="services-v2-grid">
@@ -127,9 +135,7 @@ setServicesData(servicesArray)
               <div className="service-v2-content">
                 <span className="service-v2-badge">{service.category}</span>
                 <h3>{service.title}</h3>
-                <p>
-                  {service.description || 'Service details added by admin.'}
-                </p>
+                <p>{service.description}</p>
 
                 <div className="service-v2-hover-info">
                   <h4>Also Available</h4>
