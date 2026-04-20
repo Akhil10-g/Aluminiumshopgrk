@@ -27,17 +27,36 @@ const seedDefaultAdmin = async () => {
   console.log("Default admin account created");
 };
 
+const normalizeEmail = (value) => String(value || "").trim().toLowerCase();
+
+const isPasswordMatch = async (rawPassword, storedPassword) => {
+  const normalizedRaw = String(rawPassword || "");
+  const normalizedStored = String(storedPassword || "");
+
+  if (!normalizedRaw || !normalizedStored) {
+    return false;
+  }
+
+  // Keep backward compatibility with legacy records that may store plain passwords.
+  if (normalizedRaw === normalizedStored) {
+    return true;
+  }
+
+  return bcrypt.compare(normalizedRaw, normalizedStored);
+};
+
 const adminLogin = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const email = normalizeEmail(req.body?.email);
+    const password = String(req.body?.password || "");
 
     if (!email || !password) {
       return res.status(400).json({ message: "Email and password are required" });
     }
 
-    const normalizedEmail = email.toLowerCase();
-    const envAdminEmail = (process.env.ADMIN_EMAIL || "").trim().toLowerCase();
-    const envAdminPassword = process.env.ADMIN_PASSWORD || "";
+    const normalizedEmail = email;
+    const envAdminEmail = normalizeEmail(process.env.ADMIN_EMAIL || "grkaluminiumshop@gmail.com");
+    const envAdminPassword = String(process.env.ADMIN_PASSWORD || "gadd_1980");
 
     let admin = await User.findOne({ email: normalizedEmail, role: "admin" });
 
@@ -72,7 +91,7 @@ const adminLogin = async (req, res) => {
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
-    const isMatch = await bcrypt.compare(password, admin.password);
+    const isMatch = await isPasswordMatch(password, admin.password);
 
     if (!isMatch) {
       if (normalizedEmail === envAdminEmail && password === envAdminPassword) {

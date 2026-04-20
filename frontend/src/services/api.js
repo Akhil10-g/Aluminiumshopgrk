@@ -115,8 +115,28 @@ export const toAbsoluteImageUrl = (imagePath) => {
     return 'https://images.unsplash.com/photo-1591888227599-779811939961?auto=format&fit=crop&w=1200&q=80'
   }
 
+  const normalizedImagePath = String(imagePath).toLowerCase()
+  if (normalizedImagePath.endsWith('/default-service.jpg')) {
+    return localAssetsByType.services['acp-elevation-building.jpeg'] ||
+      'https://images.unsplash.com/photo-1591888227599-779811939961?auto=format&fit=crop&w=1200&q=80'
+  }
+
   if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
-    return imagePath
+    try {
+      const parsedUrl = new URL(imagePath)
+
+      if (parsedUrl.hostname === 'localhost' || parsedUrl.hostname === '127.0.0.1') {
+        return `${API_BASE_URL}${parsedUrl.pathname}`
+      }
+
+      if (parsedUrl.protocol === 'http:') {
+        parsedUrl.protocol = 'https:'
+      }
+
+      return parsedUrl.toString()
+    } catch (_error) {
+      return imagePath
+    }
   }
 
   const localAsset = getLocalAssetUrl(imagePath)

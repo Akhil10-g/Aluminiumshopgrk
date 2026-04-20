@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react"
 import './Services.css'
+import { toAbsoluteImageUrl } from '../services/api'
 import acpElevation from '../assets/services/acp-elevation-building.jpeg'
 import partition from '../assets/services/aluminium-patition.jpeg'
 import glassPartition from '../assets/services/glass-partition-office.jpeg'
@@ -24,8 +24,6 @@ const imageMapping = {
 
 // ✅ Image Logic
 const getServiceImage = (service) => {
-  if (service?.image) return service.image
-
   const text = `${service?.title || ''} ${service?.description || ''}`.toLowerCase()
 
   if (text.includes('acp')) return imageMapping.acp
@@ -60,46 +58,19 @@ const workHighlights = [
   'Mesh Work',
 ]
 
-export default function Services() {
-  const [servicesData, setServicesData] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState("")
-
-  // ✅ FETCH DATA (SAFE VERSION)
-  useEffect(() => {
-    fetch(`${import.meta.env.VITE_API_URL}/api/services`)
-      .then(res => res.json())
-      .then(data => {
-        console.log("API RESPONSE:", data)
-
-        let safeArray = []
-
-        if (Array.isArray(data)) {
-          safeArray = data
-        } else if (Array.isArray(data.services)) {
-          safeArray = data.services
-        } else if (Array.isArray(data.data)) {
-          safeArray = data.data
-        } else {
-          safeArray = []
-        }
-
-        setServicesData(safeArray)
-        setLoading(false)
-      })
-      .catch(err => {
-        console.error(err)
-        setError("Failed to load services")
-        setLoading(false)
-      })
-  }, [])
+export default function Services({
+  servicesData = [],
+  loading = false,
+  error = '',
+}) {
 
   // ✅ SAFE MAPPING (NO CRASH)
   const serviceList = Array.isArray(servicesData)
     ? servicesData.map((item, index) => ({
         title: item.title || `Service ${index + 1}`,
         category: getServiceCategory(item),
-        image: getServiceImage(item),
+        image: toAbsoluteImageUrl(item.image) || getServiceImage(item),
+        fallbackImage: getServiceImage(item),
         description: item.description || '',
       }))
     : []
@@ -121,14 +92,14 @@ export default function Services() {
       ) : (
         <div className="services-v2-grid">
           {serviceList.map((service, index) => (
-            <article key={index} className="service-v2-card">
+            <article key={service.title || index} className="service-v2-card">
               <img
-                src={service.image || imageMapping.default}
+                src={service.image || service.fallbackImage || imageMapping.default}
                 alt={service.title}
                 loading="lazy"
                 onError={(e) => {
                   e.target.onerror = null
-                  e.target.src = imageMapping.default
+                  e.target.src = service.fallbackImage || imageMapping.default
                 }}
               />
 
