@@ -1,4 +1,7 @@
 {
+  "buildCommand": "npm install && npm run build",
+  "outputDirectory": "dist",
+  "envPrefix": "VITE_",
   "rewrites": [
     {
       "source": "/(.*)",

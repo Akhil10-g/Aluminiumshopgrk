@@ -50,12 +50,83 @@ export const getApiErrorMessage = (error, fallbackMessage = 'Something went wron
   return fallbackMessage
 }
 
+const materialAssetUrls = import.meta.glob('../assets/materials/*', {
+  eager: true,
+  import: 'default',
+})
+const serviceAssetUrls = import.meta.glob('../assets/services/*', {
+  eager: true,
+  import: 'default',
+})
+const projectAssetUrls = import.meta.glob('../assets/PROJECTIMAGES/*', {
+  eager: true,
+  import: 'default',
+})
+
+const mapAssetByFileName = (assetMap) =>
+  Object.entries(assetMap).reduce((acc, [path, assetUrl]) => {
+    const fileName = path.split('/').pop()?.toLowerCase()
+    if (fileName) {
+      acc[fileName] = assetUrl
+    }
+    return acc
+  }, {})
+
+const localAssetsByType = {
+  materials: mapAssetByFileName(materialAssetUrls),
+  services: mapAssetByFileName(serviceAssetUrls),
+  projects: mapAssetByFileName(projectAssetUrls),
+}
+
+const getLocalAssetUrl = (imagePath) => {
+  if (typeof imagePath !== 'string') {
+    return ''
+  }
+
+  const cleanedPath = imagePath.split('?')[0].split('#')[0]
+  const fileName = cleanedPath.split('/').pop()?.toLowerCase()
+  if (!fileName) {
+    return ''
+  }
+
+  const normalizedPath = cleanedPath.toLowerCase()
+
+  if (normalizedPath.includes('/materials/')) {
+    return localAssetsByType.materials[fileName] || ''
+  }
+
+  if (normalizedPath.includes('/services/')) {
+    return localAssetsByType.services[fileName] || ''
+  }
+
+  if (
+    normalizedPath.includes('/projectimages/') ||
+    normalizedPath.includes('/project-images/') ||
+    normalizedPath.includes('/projects/')
+  ) {
+    return localAssetsByType.projects[fileName] || ''
+  }
+
+  return ''
+}
+
 export const toAbsoluteImageUrl = (imagePath) => {
   if (!imagePath) {
     return 'https://images.unsplash.com/photo-1591888227599-779811939961?auto=format&fit=crop&w=1200&q=80'
   }
 
   if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+    return imagePath
+  }
+
+  const localAsset = getLocalAssetUrl(imagePath)
+  if (localAsset) {
+    return localAsset
+  }
+
+  // Static images from public folder (starting with /) stay as-is.
+  // Database/upload images from backend are prefixed with API_BASE_URL.
+  if (imagePath.startsWith('/images/') || imagePath.startsWith('/materials/') || imagePath.startsWith('/services/')) {
     return imagePath
   }
 
@@ -145,7 +216,9 @@ export const updateHomepageData = async (token, formData) => {
 }
 
 export const adminLogin = async (payload) => {
-  const response = await request(() => api.post('/api/auth/login', payload))
+  const response = await request(() =>
+    api.post('/api/auth/login', payload)
+  )
   return response.data
 }
 

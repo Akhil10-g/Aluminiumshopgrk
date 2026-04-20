@@ -1,4 +1,11 @@
 import { useEffect, useMemo, useState } from 'react'
+// Import service/work images from assets
+import alumWindowFrame from '../assets/services/aluminium-window-frame.jpeg'
+import acpSheet from '../assets/services/acp-sheet.jpeg'
+import alumPartition from '../assets/services/aluminium-partition-cabin.jpeg'
+import acpElevation from '../assets/services/acp-elevation-building.jpeg'
+import alumFallCeiling from '../assets/services/aluminium-fall-ceiling.jpeg'
+import logoImg from '../assets/logo.svg'
 
 const slides = [
   {
@@ -8,16 +15,16 @@ const slides = [
     logo: '/images/logo/logo.png',
     title: 'GRK Aluminium Works',
     subtitle: 'Trusted Aluminium & ACP Team',
-    description: 'Trusted Aluminium & ACP Solutions',
+    description: 'Premium solutions crafted with precision and expertise since years',
     cta: 'Get Quote',
   },
   {
     key: 'work',
     type: 'work',
     backgrounds: [
-      '/images/services/aluminium-window-frame.jpeg',
-      '/images/services/acp-sheet.jpeg',
-      '/images/services/aluminium-partition-cabin.jpeg',
+      alumWindowFrame,
+      acpSheet,
+      alumPartition,
     ],
     title: 'Our Work Speaks Quality',
     subtitle: 'Premium Aluminium, ACP & Partition Solutions',
@@ -26,8 +33,8 @@ const slides = [
   {
     key: 'projects',
     type: 'projects',
-    background: '/images/services/aluminium-partition-cabin.jpeg',
-    logo: '/images/logo/logo.png',
+    background: acpElevation,
+    logo: logoImg,
     title: 'Explore Our Projects',
     subtitle: 'Residential & Commercial Installations',
     description: 'Browse completed aluminium, ACP, glazing, and partition projects delivered across locations.',
@@ -35,8 +42,8 @@ const slides = [
   {
     key: 'contact',
     type: 'contact',
-    background: '/images/services/aluminium-window.jpeg',
-    logo: '/images/logo/logo.png',
+    background: alumFallCeiling,
+    logo: logoImg,
     title: 'Get in Touch Today',
     subtitle: 'Phone: +91 9392012776, +91 9849170500',
     description: 'Fast consultation for aluminium, ACP, glazing, partitions, and installation work.',

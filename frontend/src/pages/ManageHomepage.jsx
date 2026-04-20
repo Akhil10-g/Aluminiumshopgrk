@@ -638,98 +638,122 @@ function ManageHomepage() {
   return (
     <section className="section shell admin-page">
       <div className="admin-header">
-        <h1>Simple Admin Panel</h1>
+        <div>
+          <p className="eyebrow">Dashboard</p>
+          <h1>Admin Control Center</h1>
+        </div>
         <button type="button" className="catalog-btn outline" onClick={logout}>
           Logout
         </button>
       </div>
 
+      <div className="admin-summary-strip">
+        <article className="admin-summary-card">
+          <p className="admin-mini-text">Total Services</p>
+          <strong>{services.length}</strong>
+        </article>
+        <article className="admin-summary-card">
+          <p className="admin-mini-text">Total Projects</p>
+          <strong>{projects.length}</strong>
+        </article>
+        <article className="admin-summary-card">
+          <p className="admin-mini-text">Pending Quotes</p>
+          <strong>{quotes.filter((item) => !item.isOpened).length}</strong>
+        </article>
+        <article className="admin-summary-card">
+          <p className="admin-mini-text">Opened Quotes</p>
+          <strong>{quotes.filter((item) => item.isOpened).length}</strong>
+        </article>
+      </div>
+
       {error && <p className="error-message">{error}</p>}
       {success && <p className="info-message">{success}</p>}
 
-      <div className="admin-card">
-        <h2>Add Service (Image + Description)</h2>
-        <div className="admin-form">
-          <label>
-            Service Title
-            <input
-              type="text"
-              value={serviceForm.title}
-              onChange={(e) => setServiceForm((prev) => ({ ...prev, title: e.target.value }))}
-              placeholder="Example: ACP Elevation Work"
-            />
-          </label>
+      <div className="admin-create-grid">
+        <div className="admin-card">
+          <h2>Add Service (Image + Description)</h2>
+          <div className="admin-form">
+            <label>
+              Service Title
+              <input
+                type="text"
+                value={serviceForm.title}
+                onChange={(e) => setServiceForm((prev) => ({ ...prev, title: e.target.value }))}
+                placeholder="Example: ACP Elevation Work"
+              />
+            </label>
 
-          <label>
-            Service Description
-            <textarea
-              value={serviceForm.description}
-              onChange={(e) => setServiceForm((prev) => ({ ...prev, description: e.target.value }))}
-              placeholder="Example: ACP cladding and aluminium elevation finishing for commercial buildings."
-              rows={4}
-            />
-          </label>
+            <label>
+              Service Description
+              <textarea
+                value={serviceForm.description}
+                onChange={(e) => setServiceForm((prev) => ({ ...prev, description: e.target.value }))}
+                placeholder="Example: ACP cladding and aluminium elevation finishing for commercial buildings."
+                rows={4}
+              />
+            </label>
 
-          <label>
-            Service Image
-            <input
-              type="file"
-              accept="image/*"
-              onChange={(e) => setServiceForm((prev) => ({ ...prev, image: e.target.files?.[0] || null }))}
-            />
-          </label>
+            <label>
+              Service Image
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => setServiceForm((prev) => ({ ...prev, image: e.target.files?.[0] || null }))}
+              />
+            </label>
 
-          {serviceImagePreview && <img src={serviceImagePreview} alt="Service preview" className="admin-preview" />}
+            {serviceImagePreview && <img src={serviceImagePreview} alt="Service preview" className="admin-preview" />}
 
-          <div className="admin-footer-actions">
-            <button type="button" className="solid-btn" onClick={saveService} disabled={savingService}>
-              {savingService ? 'Saving...' : 'Add Service'}
-            </button>
-            {serviceCreateStatus && <p className="admin-mini-text">{serviceCreateStatus}</p>}
+            <div className="admin-footer-actions">
+              <button type="button" className="solid-btn" onClick={saveService} disabled={savingService}>
+                {savingService ? 'Saving...' : 'Add Service'}
+              </button>
+              {serviceCreateStatus && <p className="admin-mini-text">{serviceCreateStatus}</p>}
+            </div>
           </div>
         </div>
-      </div>
 
-      <div className="admin-card">
-        <h2>Add Project (Image with Optional Description)</h2>
-        <div className="admin-form">
-          <label>
-            Project Description (Optional)
-            <textarea
-              value={projectForm.description}
-              onChange={(e) => setProjectForm((prev) => ({ ...prev, description: e.target.value }))}
-              placeholder="Optional: Office partition installation completed in Medchal."
-              rows={4}
-            />
-          </label>
+        <div className="admin-card">
+          <h2>Add Project (Image with Optional Description)</h2>
+          <div className="admin-form">
+            <label>
+              Project Description (Optional)
+              <textarea
+                value={projectForm.description}
+                onChange={(e) => setProjectForm((prev) => ({ ...prev, description: e.target.value }))}
+                placeholder="Optional: Office partition installation completed in Medchal."
+                rows={4}
+              />
+            </label>
 
-          <label>
-            Project Images
-            <input type="file" accept="image/*" multiple onChange={(e) => onProjectImagesChange(e.target.files)} />
-          </label>
+            <label>
+              Project Images
+              <input type="file" accept="image/*" multiple onChange={(e) => onProjectImagesChange(e.target.files)} />
+            </label>
 
-          {projectImagePreviews.length > 0 && (
-            <div className="admin-grid">
-              {projectImagePreviews.map((entry, index) => (
-                <article key={`${entry.name}-${index}`} className="admin-item-card">
-                  <img src={entry.url} alt={entry.name} />
-                  <p className="admin-mini-text">{entry.name}</p>
-                  <button
-                    type="button"
-                    className="catalog-btn outline"
-                    onClick={() => removeProjectDraftImage(index)}
-                  >
-                    Remove
-                  </button>
-                </article>
-              ))}
+            {projectImagePreviews.length > 0 && (
+              <div className="admin-grid">
+                {projectImagePreviews.map((entry, index) => (
+                  <article key={`${entry.name}-${index}`} className="admin-item-card">
+                    <img src={entry.url} alt={entry.name} />
+                    <p className="admin-mini-text">{entry.name}</p>
+                    <button
+                      type="button"
+                      className="catalog-btn outline"
+                      onClick={() => removeProjectDraftImage(index)}
+                    >
+                      Remove
+                    </button>
+                  </article>
+                ))}
+              </div>
+            )}
+
+            <div className="admin-footer-actions">
+              <button type="button" className="solid-btn" onClick={saveProject} disabled={savingProject}>
+                {savingProject ? 'Saving...' : 'Add Project'}
+              </button>
             </div>
-          )}
-
-          <div className="admin-footer-actions">
-            <button type="button" className="solid-btn" onClick={saveProject} disabled={savingProject}>
-              {savingProject ? 'Saving...' : 'Add Project'}
-            </button>
           </div>
         </div>
       </div>

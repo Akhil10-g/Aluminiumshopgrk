@@ -4,6 +4,7 @@ const cors = require("cors");
 const dotenv = require("dotenv");
 const path = require("path");
 const createAdmin = require("./utils/createAdmin");
+const seedServices = require("./utils/seedServices");
 
 const projectRoutes = require("./routes/projectRoutes");
 const authRoutes = require("./routes/authRoutes");
@@ -69,6 +70,7 @@ const startServer = async () => {
     console.log("MongoDB connected");
 
     await createAdmin();
+    await seedServices();
 
     app.listen(PORT, () => {
       // eslint-disable-next-line no-console
