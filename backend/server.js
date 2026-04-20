@@ -21,12 +21,37 @@ const allowedOrigins = [
   'http://localhost:5173',
   'http://localhost:3000',
   'https://aluminiumshopgrk.vercel.app',
+  'https://www.aluminiumshopgrk.vercel.app',
+  'https://grkaluminium.in',
+  'https://www.grkaluminium.in',
 ];
+
+const extraAllowedOrigins = String(process.env.FRONTEND_URLS || '')
+  .split(',')
+  .map((value) => value.trim())
+  .filter(Boolean);
+
+const isAllowedOrigin = (origin) => {
+  if (!origin) {
+    return true;
+  }
+
+  if (allowedOrigins.includes(origin) || extraAllowedOrigins.includes(origin)) {
+    return true;
+  }
+
+  try {
+    const parsed = new URL(origin);
+    return parsed.hostname.endsWith('.vercel.app');
+  } catch (_error) {
+    return false;
+  }
+};
 
 app.use(
   cors({
     origin: (origin, callback) => {
-      if (!origin || allowedOrigins.includes(origin)) {
+      if (isAllowedOrigin(origin)) {
         callback(null, true);
       } else {
         callback(new Error('CORS not allowed'));
@@ -51,6 +76,10 @@ app.use("/api/homepage", homepageRoutes);
 app.use("/api/quotes", quoteRoutes);
 
 app.use((err, req, res, next) => {
+  if (err && err.message === 'CORS not allowed') {
+    return res.status(403).json({ message: 'CORS blocked for this origin' });
+  }
+
   if (err && err.message === "Only image files are allowed") {
     return res.status(400).json({ message: err.message });
   }
