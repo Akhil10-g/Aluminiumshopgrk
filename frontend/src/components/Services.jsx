@@ -73,7 +73,11 @@ export default function Services() {
     fetch(`${import.meta.env.VITE_API_URL}/api/services`)
       .then(res => res.json())
       .then(data => {
-        setServicesData(data)
+        const servicesArray = Array.isArray(data)
+  ? data
+  : data.services || data.data || []
+
+setServicesData(servicesArray)
         setLoading(false)
       })
       .catch(err => {
