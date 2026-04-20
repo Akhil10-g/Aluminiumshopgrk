@@ -17,9 +17,22 @@ dotenv.config();
 
 const app = express();
 
+const allowedOrigins = [
+  'http://localhost:5173',
+  'http://localhost:3000',
+  'https://aluminiumshopgrk.vercel.app',
+];
+
 app.use(
   cors({
-    origin: "*",
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('CORS not allowed'));
+      }
+    },
+    credentials: true,
   })
 );
 app.use(express.json());

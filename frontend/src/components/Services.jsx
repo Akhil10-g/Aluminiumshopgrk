@@ -1,6 +1,51 @@
 import './Services.css'
-import { toAbsoluteImageUrl } from '../services/api'
+import acpElevation from '../assets/services/acp-elevation-building.jpeg'
+import partition from '../assets/services/aluminium-patition.jpeg'
+import glassPartition from '../assets/services/glass-partition-office.jpeg'
+import aluminiumDoor from '../assets/services/aluminium-door-sliding.jpeg'
+import domalWindow from '../assets/services/domal-window-sliding.jpeg'
+import fallCeiling from '../assets/services/aluminium-fall-ceiling.jpeg'
+import meshDoors from '../assets/services/aluminium-mesh-doors.jpeg'
+import windowImg from '../assets/services/aluminium-window.jpeg'
 
+// ✅ Image Mapping
+const imageMapping = {
+  acp: acpElevation,
+  partition: partition,
+  glass: glassPartition,
+  window: windowImg,
+  domal: domalWindow,
+  door: aluminiumDoor,
+  mesh: meshDoors,
+  ceiling: fallCeiling,
+  default: acpElevation,
+}
+
+// ✅ FIXED Image Logic
+const getServiceImage = (service) => {
+  const source = `${service?.title || ''} ${service?.description || ''}`.toLowerCase()
+
+  if (source.includes('acp')) return imageMapping.acp
+
+  if (source.includes('glass') || source.includes('glazing'))
+    return imageMapping.glass
+
+  if (source.includes('partition')) return imageMapping.partition
+
+  if (source.includes('domal')) return imageMapping.domal
+
+  if (source.includes('window')) return imageMapping.window
+
+  if (source.includes('door')) return imageMapping.door
+
+  if (source.includes('mesh')) return imageMapping.mesh
+
+  if (source.includes('ceiling')) return imageMapping.ceiling
+
+  return imageMapping.default
+}
+
+// ✅ Highlights
 const workHighlights = [
   'All Kind of Aluminium Works',
   'Domal Windows',
@@ -10,34 +55,27 @@ const workHighlights = [
   'Mesh Work',
 ]
 
+// ✅ Category
 const getServiceCategory = (service) => {
   const source = `${service?.title || ''} ${service?.description || ''}`.toLowerCase()
 
-  if (source.includes('glass') || source.includes('glazing')) {
-    return 'GLASS'
-  }
-
-  if (source.includes('acp')) {
-    return 'ACP'
-  }
+  if (source.includes('glass') || source.includes('glazing')) return 'GLASS'
+  if (source.includes('acp')) return 'ACP'
 
   return 'ALUMINIUM'
 }
 
-function Services({ servicesData = [], loading = false, error = '' }) {
-  const dynamicServiceList = (servicesData || []).map((item, index) => ({
+export default function Services({
+  servicesData = [],
+  loading = false,
+  error = '',
+}) {
+  const serviceList = (servicesData || []).map((item, index) => ({
     title: item.title || `Service ${index + 1}`,
     category: getServiceCategory(item),
-    images:
-      Array.isArray(item.images) && item.images.length > 0
-        ? item.images.map((img) => toAbsoluteImageUrl(img))
-        : item.image
-          ? [toAbsoluteImageUrl(item.image)]
-          : [],
+    image: getServiceImage(item),
     description: item.description || '',
   }))
-
-  const serviceList = dynamicServiceList
 
   return (
     <section id="services" className="section services-section shell">
@@ -51,36 +89,36 @@ function Services({ servicesData = [], loading = false, error = '' }) {
       ) : serviceList.length === 0 ? (
         <>
           {error && <p className="error-message">{error}</p>}
-        <p className="info-message">No services have been added by admin yet.</p>
+          <p className="info-message">
+            No services have been added by admin yet.
+          </p>
         </>
       ) : (
         <div className="services-v2-grid">
-          {serviceList.map((service) => (
-            <article key={service.title} className="service-v2-card">
+          {serviceList.map((service, index) => (
+            <article key={index} className="service-v2-card">
               <img
-                src={service.images[0] || ''}
+                src={service.image || imageMapping.default}
                 alt={service.title}
                 loading="lazy"
-                className={service.images[0] ? '' : 'empty-image'}
+                onError={(e) => {
+                  e.target.onerror = null
+                  e.target.src = imageMapping.default
+                }}
               />
+
               <div className="service-v2-content">
                 <span className="service-v2-badge">{service.category}</span>
                 <h3>{service.title}</h3>
-                <p>{service.description || 'Service details added by admin.'}</p>
+                <p>
+                  {service.description || 'Service details added by admin.'}
+                </p>
 
-                {service.images.length > 1 && (
-                  <div className="service-v2-thumbs">
-                    {service.images.slice(0, 6).map((image, index) => (
-                      <img key={`${service.title}-${index}`} src={image} alt={`${service.title} ${index + 1}`} />
-                    ))}
-                  </div>
-                )}
-
-                <div className="service-v2-hover-info" aria-hidden="true">
+                <div className="service-v2-hover-info">
                   <h4>Also Available</h4>
                   <ul>
-                    {workHighlights.map((work) => (
-                      <li key={`${service.title}-${work}`}>{work}</li>
+                    {workHighlights.map((work, i) => (
+                      <li key={i}>{work}</li>
                     ))}
                   </ul>
                 </div>
@@ -93,9 +131,6 @@ function Services({ servicesData = [], loading = false, error = '' }) {
           ))}
         </div>
       )}
-
     </section>
   )
 }
-
-export default Services

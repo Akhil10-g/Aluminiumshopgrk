@@ -16,7 +16,7 @@ const addProject = async (req, res) => {
     const { title, company, description } = req.body;
     const normalizedDescription = String(description || '').trim();
 
-    const images = (req.files || []).map((file) => `/uploads/${file.filename}`);
+    const images = (req.files || []).map((file) => `${req.protocol}://${req.get('host')}/uploads/${file.filename}`);
 
     if (images.length === 0) {
       return res.status(400).json({ message: "At least one project image is required" });
@@ -118,7 +118,7 @@ const updateProject = async (req, res) => {
       }
     }
 
-    const uploadedImages = (req.files || []).map((file) => `/uploads/${file.filename}`);
+    const uploadedImages = (req.files || []).map((file) => `${req.protocol}://${req.get('host')}/uploads/${file.filename}`);
 
     if (retainedImages !== undefined) {
       let parsedRetained = [];

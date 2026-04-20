@@ -1,7 +1,25 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { fetchProjectsAdmin, getApiErrorMessage, toAbsoluteImageUrl } from '../services/api'
+import { fetchProjectsAdmin, getApiErrorMessage } from '../services/api'
 import './ProjectsPage.css'
+
+// Import project images
+import project1 from '../assets/PROJECTIMAGES/WhatsApp Image 2026-04-17 at 09.43.30.jpeg'
+import project2 from '../assets/PROJECTIMAGES/WhatsApp Image 2026-04-17 at 09.43.32.jpeg'
+import project3 from '../assets/PROJECTIMAGES/WhatsApp Image 2026-04-17 at 09.43.37 (1).jpeg'
+import project4 from '../assets/PROJECTIMAGES/WhatsApp Image 2026-04-17 at 09.43.37.jpeg'
+import project5 from '../assets/PROJECTIMAGES/WhatsApp Image 2026-04-17 at 09.43.38 (1).jpeg'
+import project6 from '../assets/PROJECTIMAGES/WhatsApp Image 2026-04-17 at 09.43.38 (2).jpeg'
+import project7 from '../assets/PROJECTIMAGES/WhatsApp Image 2026-04-17 at 09.43.38.jpeg'
+import project8 from '../assets/PROJECTIMAGES/WhatsApp Image 2026-04-17 at 09.43.39 (1).jpeg'
+import project9 from '../assets/PROJECTIMAGES/WhatsApp Image 2026-04-17 at 09.43.39 (2).jpeg'
+import project10 from '../assets/PROJECTIMAGES/WhatsApp Image 2026-04-17 at 09.43.39.jpeg'
+
+// Project images array for fallback/cycling
+const projectImages = [
+  project1, project2, project3, project4, project5,
+  project6, project7, project8, project9, project10,
+]
 
 function ProjectsPage() {
   const [projects, setProjects] = useState([])
@@ -26,15 +44,15 @@ function ProjectsPage() {
 
   const galleryItems = useMemo(
     () =>
-      projects.flatMap((project) =>
-        (project.images || []).map((image, index) => ({
-          id: `${project._id}-${index}`,
+      projects.flatMap((project, projectIndex) =>
+        (project.images || []).map((_, imageIndex) => ({
+          id: `${project._id}-${imageIndex}`,
           projectId: project._id,
           projectTitle: project.title,
           projectCompany: project.company,
           projectDescription: project.description,
-          image: toAbsoluteImageUrl(image),
-          imageIndex: index + 1,
+          image: projectImages[imageIndex % projectImages.length],
+          imageIndex: imageIndex + 1,
           imageCount: (project.images || []).length,
         }))
       ),
@@ -68,7 +86,15 @@ function ProjectsPage() {
                 aria-label={`Open ${item.projectTitle}`}
                 title={item.projectTitle}
               >
-                <img src={item.image} alt={item.projectTitle} loading="lazy" />
+                <img 
+                  src={item.image} 
+                  alt={item.projectTitle} 
+                  loading="lazy"
+                  onError={(e) => {
+                    e.target.src = projectImages[0]
+                    e.target.alt = item.projectTitle
+                  }}
+                />
               </button>
             ))}
           </div>
@@ -95,7 +121,15 @@ function ProjectsPage() {
                   ×
                 </button>
 
-                <img src={selectedItem.image} alt={selectedItem.projectTitle} className="projects-modal-image" />
+                <img 
+                  src={selectedItem.image} 
+                  alt={selectedItem.projectTitle} 
+                  className="projects-modal-image"
+                  onError={(e) => {
+                    e.target.src = projectImages[0]
+                    e.target.alt = selectedItem.projectTitle
+                  }}
+                />
 
                 <div className="projects-modal-content">
                   <h3>{selectedItem.projectTitle}</h3>

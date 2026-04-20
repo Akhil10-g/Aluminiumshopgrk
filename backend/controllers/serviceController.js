@@ -18,10 +18,12 @@ const addService = async (req, res) => {
       return res.status(400).json({ message: 'Service image is required' });
     }
 
+    const imageUrl = `${req.protocol}://${req.get('host')}/uploads/${imageFile.filename}`;
+
     const service = await Service.create({
       title,
       description,
-      image: `/uploads/${imageFile.filename}`,
+      image: imageUrl,
     });
 
     return res.status(201).json({
@@ -66,7 +68,7 @@ const updateService = async (req, res) => {
     service.description = nextDescription;
 
     if (req.file) {
-      service.image = `/uploads/${req.file.filename}`;
+      service.image = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
     }
 
     const updatedService = await service.save();

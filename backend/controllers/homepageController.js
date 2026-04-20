@@ -29,9 +29,9 @@ const parseJsonField = (value, fallback) => {
   }
 };
 
-const mapUploadedPath = (file) => `/uploads/${file.filename}`;
+const mapUploadedPath = (file, req) => `${req.protocol}://${req.get('host')}/uploads/${file.filename}`;
 
-const mergeServicesWithUploads = (items, files) => {
+const mergeServicesWithUploads = (items, files, req) => {
   let fileIndex = 0;
 
   return (items || [])
@@ -49,7 +49,7 @@ const mergeServicesWithUploads = (items, files) => {
           if (imageRef === '__NEW__') {
             const nextFile = files[fileIndex];
             fileIndex += 1;
-            return nextFile ? mapUploadedPath(nextFile) : null;
+            return nextFile ? mapUploadedPath(nextFile, req) : null;
           }
 
           return imageRef || null;
@@ -66,7 +66,7 @@ const mergeServicesWithUploads = (items, files) => {
     .filter(Boolean);
 };
 
-const mergeItemsWithUploads = (items, files) => {
+const mergeItemsWithUploads = (items, files, req) => {
   let fileIndex = 0;
 
   return (items || [])
@@ -88,7 +88,7 @@ const mergeItemsWithUploads = (items, files) => {
 
         return {
           title: normalizedTitle,
-          image: mapUploadedPath(nextFile),
+          image: mapUploadedPath(nextFile, req),
         };
       }
 
@@ -130,21 +130,21 @@ const updateHomepage = async (req, res) => {
       ? heroPayload.workImages.filter((item) => Boolean(item))
       : [];
 
-    const uploadedWorkImages = workImageFiles.map(mapUploadedPath);
+    const uploadedWorkImages = workImageFiles.map((file) => mapUploadedPath(file, req));
 
     homepage.hero = {
       founderImage: founderFile
-        ? mapUploadedPath(founderFile)
+        ? mapUploadedPath(founderFile, req)
         : String(heroPayload.founderImage || homepage.hero?.founderImage || ''),
       workImages: [...heroWorkImages, ...uploadedWorkImages],
     };
 
     if (Array.isArray(servicesPayload)) {
-      homepage.services = mergeServicesWithUploads(servicesPayload, serviceImageFiles);
+      homepage.services = mergeServicesWithUploads(servicesPayload, serviceImageFiles, req);
     }
 
     if (Array.isArray(materialsPayload)) {
-      homepage.materials = mergeItemsWithUploads(materialsPayload, materialImageFiles);
+      homepage.materials = mergeItemsWithUploads(materialsPayload, materialImageFiles, req);
     }
 
     await homepage.save();

@@ -52,7 +52,7 @@ const addProduct = async (req, res) => {
       return res.status(400).json({ message: 'price must be a valid non-negative number' });
     }
 
-    const imagePath = req.file ? `/uploads/${req.file.filename}` : '';
+    const imagePath = req.file ? `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}` : '';
 
     const product = await Product.create({
       name: String(name).trim(),
