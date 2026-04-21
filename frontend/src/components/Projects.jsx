@@ -20,12 +20,6 @@ function Projects() {
     }
 
     loadProjects()
-
-    const timer = window.setInterval(loadProjects, 8000)
-
-    return () => {
-      window.clearInterval(timer)
-    }
   }, [])
 
   return (

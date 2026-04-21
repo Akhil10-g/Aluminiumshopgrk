@@ -2,6 +2,14 @@ const Service = require('../models/Service');
 
 const seedServices = async () => {
   try {
+    const existingCount = await Service.countDocuments();
+
+    if (existingCount > 0) {
+      // eslint-disable-next-line no-console
+      console.log('Services already exist; skipping seed');
+      return;
+    }
+
     const services = [
       {
         title: 'Domal Aluminium Door & Window Manufacturer',
@@ -65,22 +73,10 @@ const seedServices = async () => {
       },
     ];
 
-    let addedCount = 0;
-    for (const service of services) {
-      const existing = await Service.findOne({ title: service.title });
-      if (!existing) {
-        await Service.create(service);
-        addedCount++;
-      }
-    }
+    await Service.insertMany(services);
 
-    if (addedCount > 0) {
-      // eslint-disable-next-line no-console
-      console.log(`Successfully added ${addedCount} new services`);
-    } else {
-      // eslint-disable-next-line no-console
-      console.log('All services already exist');
-    }
+    // eslint-disable-next-line no-console
+    console.log(`Successfully added ${services.length} default services`);
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('Error seeding services:', error.message);
