@@ -45,7 +45,7 @@ const slides = [
     background: alumFallCeiling,
     logo: logoImg,
     title: 'Get in Touch Today',
-    subtitle: 'Phone: +91 9392012776, +91 9849170500',
+    subtitle: 'Phone: +91 9885251795, +91 9642251795',
     description: 'Fast consultation for aluminium, ACP, glazing, partitions, and installation work.',
   },
 ]

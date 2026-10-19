@@ -209,28 +209,7 @@ Important production concept:
 - Frontend and backend are different domains.
 - CORS must allow frontend domain in backend.
 
-## 10) Issues You Solved During This Project
-
-Multiple default exports / duplicate imports in Services component
-- Cause: duplicate code blocks and repeated exports/imports.
-- Fix: cleaned component to single export and single import set.
-
-Vercel schema error in vercel.json
-- Cause: invalid property envPrefix.
-- Fix: removed unsupported property.
-
-Network error / CORS blocked
-- Cause: frontend origin not allowed by backend CORS.
-- Fix: added correct production domains, including custom domain.
-
-Image not loading in production
-- Cause: relative paths or missing default image URL path.
-- Fix: robust URL normalization + local fallback image handling.
-
-Invalid credentials
-- Cause: login normalization/data mismatch edge cases.
-- Fix: hardened auth input normalization and matching logic.
-
+c
 ## 11) Why Your Current Setup Is Good
 
 - Clear modular backend architecture (routes/controllers/models)
@@ -308,3 +287,210 @@ If you want, I can also create:
 - A short beginner version (2 pages)
 - An interview-ready architecture summary
 - A step-by-step learning roadmap from this project
+
+## 16) Interview-Ready Version
+
+If you need to explain this project in an interview, keep it simple:
+
+“This is a full-stack aluminium business website built with React and Vite on the frontend, and Node.js, Express, and MongoDB on the backend. It supports services, projects, materials, quote requests, admin login, and image uploads. The frontend talks to the backend through REST APIs, JWT protects admin routes, and uploaded images are served from the backend with fallback handling on the frontend.”
+
+## 17) Important Code You May Be Asked To Write
+
+### A) Express server setup with CORS, routes, and static uploads
+
+```js
+import express from 'express';
+import cors from 'cors';
+import dotenv from 'dotenv';
+import path from 'path';
+
+dotenv.config();
+
+const app = express();
+app.use(express.json());
+app.use(cors({ origin: process.env.FRONTEND_URLS?.split(',') || true, credentials: true }));
+app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
+
+app.use('/api/auth', authRoutes);
+app.use('/api/services', serviceRoutes);
+app.use('/api/projects', projectRoutes);
+
+export default app;
+```
+
+What interviewers check:
+- Do you know how to enable CORS?
+- Can you serve uploaded files statically?
+- Do you understand route modularization?
+
+### B) JWT auth middleware
+
+```js
+import jwt from 'jsonwebtoken';
+
+export const verifyToken = (req, res, next) => {
+	const authHeader = req.headers.authorization;
+
+	if (!authHeader || !authHeader.startsWith('Bearer ')) {
+		return res.status(401).json({ message: 'No token provided' });
+	}
+
+	try {
+		const token = authHeader.split(' ')[1];
+		const decoded = jwt.verify(token, process.env.JWT_SECRET);
+		req.user = decoded;
+		next();
+	} catch (error) {
+		return res.status(403).json({ message: 'Invalid or expired token' });
+	}
+};
+```
+
+What interviewers check:
+- Can you protect admin-only routes?
+- Do you know how to read headers and validate tokens?
+
+### C) Mongoose model example
+
+```js
+import mongoose from 'mongoose';
+
+const serviceSchema = new mongoose.Schema(
+	{
+		title: { type: String, required: true },
+		description: { type: String, required: true },
+		image: { type: String, required: true },
+	},
+	{ timestamps: true }
+);
+
+export default mongoose.model('Service', serviceSchema);
+```
+
+What interviewers check:
+- Can you define schema fields and validation?
+- Do you know why timestamps are useful?
+
+### D) Controller pattern for fetching data
+
+```js
+import Service from '../models/Service.js';
+
+export const getServices = async (req, res) => {
+	try {
+		const services = await Service.find().sort({ createdAt: -1 });
+		res.json(services);
+	} catch (error) {
+		res.status(500).json({ message: 'Failed to fetch services' });
+	}
+};
+```
+
+What interviewers check:
+- Can you write async controller logic?
+- Do you handle errors properly?
+
+### E) Multer upload setup
+
+```js
+import multer from 'multer';
+import path from 'path';
+
+const storage = multer.diskStorage({
+	destination: (req, file, cb) => cb(null, 'uploads/'),
+	filename: (req, file, cb) => {
+		const uniqueName = Date.now() + '-' + Math.round(Math.random() * 1e9);
+		cb(null, uniqueName + path.extname(file.originalname));
+	},
+});
+
+export const upload = multer({ storage });
+```
+
+What interviewers check:
+- Can you handle file uploads?
+- Do you know how to avoid filename collisions?
+
+### F) Frontend API call with axios
+
+```js
+import axios from 'axios';
+
+const api = axios.create({
+	baseURL: import.meta.env.VITE_API_BASE_URL,
+});
+
+export const fetchServices = async () => {
+	const response = await api.get('/api/services');
+	return response.data;
+};
+```
+
+What interviewers check:
+- Do you centralize API calls?
+- Do you know how environment variables work in Vite?
+
+### G) React image fallback pattern
+
+```jsx
+const ServiceCard = ({ service }) => {
+	const handleImageError = (event) => {
+		event.currentTarget.src = '/images/fallback-service.jpg';
+	};
+
+	return <img src={service.image} alt={service.title} onError={handleImageError} />;
+};
+```
+
+What interviewers check:
+- Can you make the UI resilient?
+- Do you handle broken image URLs gracefully?
+
+## 18) Questions They May Ask You
+
+### Project questions
+- What problem does your app solve?
+- Why did you choose React, Express, and MongoDB?
+- How do the frontend and backend communicate?
+- How do you handle image uploads?
+- How is admin authentication implemented?
+- What happens if an uploaded image is missing in production?
+- Why did you use JWT instead of sessions?
+- How did you solve CORS issues?
+
+### Coding questions they may ask you to write
+- Create a REST API route and controller for getting services.
+- Write a Mongoose schema for a project or service.
+- Write middleware to verify a JWT token.
+- Write a Multer configuration for file uploads.
+- Write a React component that fetches API data and handles loading/error states.
+- Write an image fallback handler in React.
+- Write a login API that checks credentials and returns a token.
+
+### Backend questions
+- What is the difference between controller, route, and middleware?
+- Why do you use `async/await` with `try/catch`?
+- How do you protect admin-only endpoints?
+- How do you serve static image files from Express?
+
+### Frontend questions
+- Why use a central API service file?
+- How do environment variables work in Vite?
+- How do you handle errors in UI?
+- How do you prevent broken images from affecting the layout?
+
+## 19) Best Short Answers In Interviews
+
+- `Routes` decide the URL.
+- `Controllers` contain the business logic.
+- `Middleware` runs before the controller for tasks like auth and uploads.
+- `Mongoose` defines the database structure.
+- `JWT` keeps admin authentication stateless.
+- `Multer` handles file uploads.
+- `CORS` allows the frontend domain to talk to the backend.
+
+## 20) What To Say If They Ask For Your Strongest Part
+
+You can say:
+
+“My strongest part is connecting the UI to the API cleanly. I designed the frontend to handle loading, errors, and image fallback, and the backend to keep authentication, uploads, and data models separated so the app stays maintainable.”
