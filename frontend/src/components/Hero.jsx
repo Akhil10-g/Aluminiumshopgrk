@@ -5,14 +5,12 @@ import acpSheet from '../assets/services/acp-sheet.jpeg'
 import alumPartition from '../assets/services/aluminium-partition-cabin.jpeg'
 import acpElevation from '../assets/services/acp-elevation-building.jpeg'
 import alumFallCeiling from '../assets/services/aluminium-fall-ceiling.jpeg'
-import logoImg from '../assets/logo.svg'
 
 const slides = [
   {
     key: 'founder',
     type: 'founder',
     background: '/images/founder/founder.jpg',
-    logo: '/images/logo/logo.png',
     title: 'GRK Aluminium Works',
     subtitle: 'Trusted Aluminium & ACP Team',
     description: 'Premium solutions crafted with precision and expertise since years',
@@ -34,7 +32,6 @@ const slides = [
     key: 'projects',
     type: 'projects',
     background: acpElevation,
-    logo: logoImg,
     title: 'Explore Our Projects',
     subtitle: 'Residential & Commercial Installations',
     description: 'Browse completed aluminium, ACP, glazing, and partition projects delivered across locations.',
@@ -43,7 +40,6 @@ const slides = [
     key: 'contact',
     type: 'contact',
     background: alumFallCeiling,
-    logo: logoImg,
     title: 'Get in Touch Today',
     subtitle: 'Phone: +91 9885251795, +91 9642251795',
     description: 'Fast consultation for aluminium, ACP, glazing, partitions, and installation work.',
@@ -53,12 +49,13 @@ const slides = [
 function Hero() {
   const [active, setActive] = useState(1)
   const [workImage, setWorkImage] = useState(0)
+  const [isPaused, setIsPaused] = useState(false)
 
   const currentSlide = slides[active]
   const workImages = useMemo(() => {
     const workSlide = slides.find((slide) => slide.type === 'work')
     return workSlide?.backgrounds ?? []
-  }, [])
+  }, [isPaused])
 
   useEffect(() => {
     const timer = window.setInterval(() => {
@@ -69,7 +66,7 @@ function Hero() {
   }, [])
 
   useEffect(() => {
-    if (currentSlide.type !== 'work' || workImages.length === 0) {
+    if (isPaused || currentSlide.type !== 'work' || workImages.length === 0) {
       return undefined
     }
 
@@ -78,7 +75,7 @@ function Hero() {
     }, 4800)
 
     return () => window.clearInterval(timer)
-  }, [currentSlide.type, workImages.length])
+  }, [currentSlide.type, isPaused, workImages.length])
 
   const goPrev = () => setActive((prev) => (prev - 1 + slides.length) % slides.length)
   const goNext = () => setActive((prev) => (prev + 1) % slides.length)
@@ -128,7 +125,7 @@ function Hero() {
 
                   {slide.type === 'contact' && (
                     <div className="hero-actions">
-                      <a href="tel:+919392012776" className="hero-cta">
+                      <a href="tel:+919885251795" className="hero-cta">
                         Call Now
                       </a>
                       <a
@@ -177,14 +174,12 @@ function Hero() {
                   {slide.type === 'contact' && (
                     <div className="hero-contact-card">
                       <img src={slide.background} alt="Industrial aluminium work" />
-                      <img src={slide.logo} alt="GRK Aluminium Works logo" className="hero-watermark-center" />
                     </div>
                   )}
 
                   {slide.type === 'projects' && (
                     <div className="hero-contact-card">
                       <img src={slide.background} alt="Featured aluminium project" />
-                      <img src={slide.logo} alt="GRK Aluminium Works logo" className="hero-watermark-center" />
                     </div>
                   )}
                 </div>
@@ -210,6 +205,16 @@ function Hero() {
             aria-label={`Go to slide ${index + 1}`}
           />
         ))}
+        <button
+          type="button"
+          className="hero-pause-button"
+          onClick={() => setIsPaused((paused) => !paused)}
+          aria-label={isPaused ? 'Resume hero slideshow' : 'Pause hero slideshow'}
+          aria-pressed={isPaused}
+          title={isPaused ? 'Resume slideshow' : 'Pause slideshow'}
+        >
+          {isPaused ? '▶' : 'Ⅱ'}
+        </button>
       </div>
     </section>
   )

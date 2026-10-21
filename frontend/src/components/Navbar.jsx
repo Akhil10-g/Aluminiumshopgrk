@@ -60,9 +60,9 @@ function Navbar() {
           <p className="top-address">Medchal, Telangana 501401</p>
           <div className="top-contact-actions">
             <p className="top-phones">
-              <a href="tel:+919392012776">+91 9392012776</a>
+              <a href="tel:+919885251795">+91 9885251795</a>
               <span>, </span>
-              <a href="tel:+919849170500">+91 9849170500</a>
+              <a href="tel:+919642251795">+91 9642251795</a>
             </p>
 
             <Link to="/admin/login" className="admin-corner-icon" aria-label="Admin Login" title="Admin Login">

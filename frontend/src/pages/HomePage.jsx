@@ -245,7 +245,7 @@ function HomePage() {
           <h2>Need Aluminium Work?</h2>
           <p>Talk to our team for fast estimates and site-ready execution support.</p>
           <div className="cta-actions">
-            <a href="tel:+919392012776" className="solid-btn">
+            <a href="tel:+919885251795" className="solid-btn">
               Call Now
             </a>
             <a
@@ -261,13 +261,13 @@ function HomePage() {
           <div className="direct-contact-alert" role="alert" aria-live="polite">
             <p>For direct contact, use quick connect options:</p>
             <div className="direct-contact-links">
-              <a href="tel:+919392012776" className="direct-contact-link call-link">
+              <a href="tel:+919885251795" className="direct-contact-link call-link">
                 <span className="contact-icon" aria-hidden="true">
                   <svg viewBox="0 0 24 24" role="img">
                     <path d="M6.62 10.79a15.46 15.46 0 006.59 6.59l2.2-2.2a1 1 0 011.01-.24 11.2 11.2 0 003.53.56 1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.5a1 1 0 011 1 11.2 11.2 0 00.56 3.53 1 1 0 01-.24 1.01l-2.2 2.25z" />
                   </svg>
                 </span>
-                Call +91 9392012776
+                Call +91 9885251795
               </a>
 
               <a

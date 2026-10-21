@@ -9,7 +9,7 @@ function Footer() {
 
         <div>
           <h4>Contact</h4>
-          <p>Phone: 9392012776, 9849170500</p>
+          <p>Phone: +91 9885251795, +91 9642251795</p>
           <p>Email: grkaluminiumshop@gmail.com</p>
         </div>
 

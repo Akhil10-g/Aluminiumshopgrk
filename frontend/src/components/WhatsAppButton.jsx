@@ -1,4 +1,4 @@
-const whatsappNumber = '919876543210'
+const whatsappNumber = '919392012776'
 
 function WhatsAppButton() {
   const message = encodeURIComponent('Hello GRK Aluminium Works, I need a quote for aluminium work.')

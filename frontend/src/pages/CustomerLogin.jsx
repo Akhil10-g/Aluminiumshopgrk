@@ -28,7 +28,7 @@ function CustomerLogin() {
           </a>
         </div>
 
-        <p className="admin-mini-text">Call us: +91 9392012776, +91 9849170500</p>
+        <p className="admin-mini-text">Call us: +91 9885251795, +91 9642251795</p>
 
         <div className="customer-access-links">
           <Link to="/admin/login">Admin Login</Link>
