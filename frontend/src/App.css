@@ -619,7 +619,7 @@ main {
   position: relative;
   min-height: 82vh;
   background: linear-gradient(135deg, #0f172a 0%, #162d5a 40%, #1e3a8a 100%);
-  overflow: hidden;
+  overflow: clip;
 }
 
 .hero-section.hero-modern::before {
@@ -635,7 +635,7 @@ main {
 .hero-slider-modern {
   position: relative;
   min-height: 82vh;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .hero-slide-modern {
@@ -646,18 +646,20 @@ main {
 }
 
 .hero-slide-modern.active {
+  position: relative;
+  inset: auto;
   opacity: 1;
 }
 
 .hero-slide-shell {
   position: relative;
   z-index: 3;
-  min-height: 82vh;
+  min-height: max(82vh, 700px);
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(320px, 1fr);
   align-items: center;
   gap: 36px;
-  padding: 60px 0 80px;
+  padding: 48px 0 100px;
 }
 
 .hero-copy {
