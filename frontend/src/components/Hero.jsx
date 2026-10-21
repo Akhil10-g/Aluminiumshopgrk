@@ -11,9 +11,9 @@ const slides = [
     key: 'founder',
     type: 'founder',
     background: '/images/founder/founder.jpg',
-    title: 'GRK Aluminium Works',
-    subtitle: 'Trusted Aluminium & ACP Team',
-    description: 'Premium solutions crafted with precision and expertise since years',
+    title: 'Meet Our Founder',
+    subtitle: 'Founder-led aluminium craftsmanship',
+    description: 'A hands-on team building reliable aluminium, ACP, glazing, and partition solutions with care.',
     cta: 'Get Quote',
   },
   {
@@ -47,7 +47,7 @@ const slides = [
 ]
 
 function Hero() {
-  const [active, setActive] = useState(1)
+  const [active, setActive] = useState(0)
   const [workImage, setWorkImage] = useState(0)
   const [isPaused, setIsPaused] = useState(false)
 
@@ -55,15 +55,19 @@ function Hero() {
   const workImages = useMemo(() => {
     const workSlide = slides.find((slide) => slide.type === 'work')
     return workSlide?.backgrounds ?? []
-  }, [isPaused])
+  }, [])
 
   useEffect(() => {
+    if (isPaused) {
+      return undefined
+    }
+
     const timer = window.setInterval(() => {
       setActive((prev) => (prev + 1) % slides.length)
     }, 4000)
 
     return () => window.clearInterval(timer)
-  }, [])
+  }, [isPaused])
 
   useEffect(() => {
     if (isPaused || currentSlide.type !== 'work' || workImages.length === 0) {
@@ -90,6 +94,11 @@ function Hero() {
             <article key={slide.key} className={`hero-slide-modern ${isActive ? 'active' : ''}`}>
               <div className="hero-slide-shell shell">
                 <div className="hero-copy">
+                  <img
+                    src="/GRKLOGO-circle.png"
+                    alt="GRK Aluminium Works logo"
+                    className="hero-brand-mark"
+                  />
                   {slide.type === 'work' ? (
                     <>
                       <p className="hero-kicker">PREMIUM ALUMINIUM, ACP & PARTITION SOLUTIONS</p>
@@ -102,6 +111,9 @@ function Hero() {
                     <>
                       <p className="hero-kicker">{slide.subtitle}</p>
                       <h1>{slide.title}</h1>
+                      {slide.type === 'founder' && (
+                        <p className="hero-founder-name">GADDAM RAJ KUMAR</p>
+                      )}
                     </>
                   )}
                   <p className="hero-description">{slide.description}</p>

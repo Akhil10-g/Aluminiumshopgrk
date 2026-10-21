@@ -286,7 +286,7 @@ function HomePage() {
             </div>
           </div>
 
-          <p className="cta-contact-note">Contact: +91 9392012776, +91 9849170500</p>
+          <p className="cta-contact-note">Contact: +91 9885251795, +91 9642251795</p>
 
           <form id="quote-form" className="quote-form" onSubmit={onQuoteSubmit}>
             <div className="quote-grid">

@@ -76,7 +76,7 @@ function Navbar() {
 
       <nav className="navbar shell" aria-label="Main navigation">
         <Link to="/" className="brand" onClick={closeMenus}>
-          <img src="/images/logo/logo.png" alt="GRK Aluminium Works logo" className="brand-logo" />
+          <img src="/GRKLOGO-circle.png" alt="GRK Aluminium Works logo" className="brand-logo" />
           <span>GRK Aluminium Works</span>
         </Link>
 
